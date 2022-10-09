@@ -24,7 +24,7 @@ FC_TEST_DATA_PATH?=$(PWD)
 GO_VERSION = $(shell go version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f1,2)
 ifeq ($(GO_VERSION), $(filter $(GO_VERSION),1.14 1.15))
     define install_go
-		cd .hack; GO111MODULE=on GOBIN=$(GOBIN) go get $(1)@$(2) 
+		cd .hack; GO111MODULE=on GOBIN=$(GOBIN) go get $(1)@$(2)
 		cd .hack; GO111MODULE=on GOBIN=$(GOBIN) go install $(1)
     endef
 else
@@ -41,7 +41,7 @@ bin:
 	mkdir -p bin
 
 bin/tc-redirect-tap: bin
-	$(call install_go,github.com/awslabs/tc-redirect-tap/cmd/tc-redirect-tap,v0.0.0-20220715050423-f2af44521093)
+	$(call install_go,github.com/awslabs/tc-redirect-tap/cmd/tc-redirect-tap,9f2f6be89079d4f3ffc179138cbff36542669809)
 
 bin/ptp: bin
 	$(call install_go,github.com/containernetworking/plugins/plugins/main/ptp,v1.1.1)
