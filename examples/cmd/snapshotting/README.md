@@ -4,6 +4,25 @@ This example shows snapshotting in action by sending a marker to a VM via a runn
 
 This test requires both KVM and root access.
 
+## 
+
+```
+$ cd /root
+$ git clone https://github.com/firecracker-microvm/firecracker.git
+$ cd firecracker
+
+$ ./tools/devtool build_rootfs
+
+$ find /root/firecracker/build/
+/root/firecracker/build/
+/root/firecracker/build/rootfs
+/root/firecracker/build/rootfs/bionic.rootfs.ext4
+/root/firecracker/build/rootfs/mnt
+/root/firecracker/build/rootfs/ssh
+/root/firecracker/build/rootfs/ssh/id_rsa
+/root/firecracker/build/rootfs/ssh/id_rsa.pub
+```
+
 ## Running the test
 
 Run this test by first running
