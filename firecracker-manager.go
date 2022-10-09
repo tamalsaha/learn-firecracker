@@ -34,8 +34,8 @@ type DeleteRequest struct {
 }
 
 var (
-	runningVMs map[string]RunningFirecracker = make(map[string]RunningFirecracker)
-	ipByte     byte                          = 3
+	runningVMs      = make(map[string]RunningFirecracker)
+	ipByte     byte = 3
 )
 
 func main() {
@@ -60,7 +60,7 @@ func shutDown(running RunningFirecracker) {
 func makeIso(cloudInitPath string) (string, error) {
 	image := "/tmp/cloud-init.iso"
 	metaDataPath := "/tmp/my-meta-data.yml"
-	err := ioutil.WriteFile(metaDataPath, []byte("instance-id: i-litchi12345"), 0o644)
+	err := os.WriteFile(metaDataPath, []byte("instance-id: i-litchi12345"), 0o644)
 	if err != nil {
 		return "", fmt.Errorf("Failed to create metadata file: %s", err)
 	}
@@ -88,7 +88,7 @@ func deleteRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 func createRequestHandler(w http.ResponseWriter, r *http.Request) {
 	ipByte += 1
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Fatalf("failed to read body, %s", err)
 	}
@@ -240,18 +240,18 @@ func (opts *options) getConfig() (*firecracker.Config, error) {
 			IsReadOnly:   firecracker.Bool(false),
 		},
 	}
-	if opts.Request.CloudInitPath != "" {
-		isoPath, err := makeIso(opts.Request.CloudInitPath)
-		if err != nil {
-			return nil, fmt.Errorf("Failed to create iso: %s", err)
-		}
-		drives = append(drives, models.Drive{
-			DriveID:      firecracker.String("2"),
-			PathOnHost:   &isoPath,
-			IsRootDevice: firecracker.Bool(false),
-			IsReadOnly:   firecracker.Bool(true),
-		})
-	}
+	//if opts.Request.CloudInitPath != "" {
+	//	isoPath, err := makeIso(opts.Request.CloudInitPath)
+	//	if err != nil {
+	//		return nil, fmt.Errorf("Failed to create iso: %s", err)
+	//	}
+	//	drives = append(drives, models.Drive{
+	//		DriveID:      firecracker.String("2"),
+	//		PathOnHost:   &isoPath,
+	//		IsRootDevice: firecracker.Bool(false),
+	//		IsReadOnly:   firecracker.Bool(true),
+	//	})
+	//}
 
 	return &firecracker.Config{
 		VMID:            opts.Id,
@@ -272,7 +272,7 @@ func (opts *options) getConfig() (*firecracker.Config, error) {
 			VcpuCount:  firecracker.Int64(opts.FcCPUCount),
 			MemSizeMib: firecracker.Int64(opts.FcMemSz),
 			// CPUTemplate: models.CPUTemplate(opts.FcCPUTemplate),
-			HtEnabled: firecracker.Bool(false),
+			// HtEnabled: firecracker.Bool(false),
 		},
 		// JailerCfg: jail,
 		// VsockDevices:      vsocks,
