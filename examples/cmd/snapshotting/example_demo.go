@@ -45,7 +45,7 @@ const (
 
 func writeCNIConfWithHostLocalSubnet(path, networkName, subnet string) error {
 	return os.WriteFile(path, []byte(fmt.Sprintf(`{
-		"cniVersion": "0.3.1",
+		"cniVersion": "0.4.0",
 		"name": "%s",
 		"plugins": [
 		  {
