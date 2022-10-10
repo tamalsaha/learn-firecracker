@@ -26,7 +26,7 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(nc)
-	
+
 	//err := buildData("i123")
 	//if err != nil {
 	//	panic(err)
