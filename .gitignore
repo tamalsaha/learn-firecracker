@@ -13,3 +13,9 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+examples/cmd/snapshotting/firecracker
+examples/cmd/snapshotting/root-drive-ssh-key
+examples/cmd/snapshotting/root-drive-with-ssh.img
+examples/cmd/snapshotting/snapshotssh/
+examples/cmd/snapshotting/vmlinux
