@@ -35,7 +35,7 @@ endif
 
 all: plugins image vmlinux firecracker
 
-plugins: bin/tc-redirect-tap bin/ptp bin/host-local | bin
+plugins: bin/tc-redirect-tap bin/ptp bin/firewall bin/host-local | bin
 
 bin:
 	mkdir -p bin
@@ -45,6 +45,9 @@ bin/tc-redirect-tap: bin
 
 bin/ptp: bin
 	$(call install_go,github.com/containernetworking/plugins/plugins/main/ptp,v1.1.1)
+
+bin/firewall: bin
+	$(call install_go,github.com/containernetworking/plugins/plugins/main/plugins/meta/firewall,v1.1.1)
 
 bin/host-local: bin
 	$(call install_go,github.com/containernetworking/plugins/plugins/ipam/host-local,v1.1.1)

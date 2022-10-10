@@ -50,10 +50,18 @@ func writeCNIConfWithHostLocalSubnet(path, networkName, subnet string) error {
 		"plugins": [
 		  {
 			"type": "ptp",
+            "ipMasq": true,
 			"ipam": {
 			  "type": "host-local",
-			  "subnet": "%s"
+			  "subnet": "%s",
+       	      "resolvConf": "/etc/resolv.conf"
+			},
+			"dns": {
+				"nameservers": [ "1.1.1.1", "8.8.8.8" ]
 			}
+		  },
+		  {
+		    "type": "firewall"
 		  },
 		  {
 			"type": "tc-redirect-tap"
