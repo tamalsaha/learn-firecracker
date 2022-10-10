@@ -71,7 +71,7 @@ firecracker:
 
 root-drive-with-ssh.img root-drive-ssh-key:
 	- mkdir temp
-	- git clone https://github.com/firecracker-microvm/firecracker temp
+	- git clone https://github.com/tamalsaha/firecracker temp
 	temp/tools/devtool build_rootfs -s 20000M
 	cp temp/build/rootfs/bionic.rootfs.ext4 root-drive-with-ssh.img
 	cp temp/build/rootfs/ssh/id_rsa root-drive-ssh-key
