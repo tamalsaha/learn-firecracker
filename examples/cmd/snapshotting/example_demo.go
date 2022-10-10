@@ -178,6 +178,7 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 	socketFile := fmt.Sprintf("%s.create", socketPath)
 
 	cfg := createNewConfig(socketFile, withNetworkInterface(networkInterface))
+	// cfg.KernelArgs
 
 	// Use firecracker binary when making machine
 	cmd := sdk.VMCommandBuilder{}.WithSocketPath(socketFile).WithBin(filepath.Join(dir, "firecracker")).Build(ctx)
@@ -187,6 +188,36 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 		log.Fatal(err)
 	}
 	defer os.Remove(socketFile)
+
+	{
+
+		m.Handlers.FcInit.Swap(sdk.Handler{
+			Name: sdk.SetupKernelArgsHandlerName,
+			Fn: func(ctx context.Context, m *sdk.Machine) error {
+				kernelArgs := parseKernelArgs(m.Cfg.KernelArgs)
+
+				//// If any network interfaces have a static IP configured, we need to set the "ip=" boot param.
+				//// Validation that we are not overriding an existing "ip=" setting happens in the network validation
+				//if staticIPInterface := m.Cfg.NetworkInterfaces.staticIPInterface(); staticIPInterface != nil {
+				//	ipBootParam := staticIPInterface.StaticConfiguration.IPConfiguration.ipBootParam()
+				//	kernelArgs["ip"] = &ipBootParam
+				//}
+
+				// ds=nocloud-net;s=http://169.254.169.254/latest/
+				// network-config=__NETWORK_CONFIG__",
+
+				ds := "nocloud-net;s=http://169.254.169.254/latest/"
+				kernelArgs["ds"] = &ds
+
+				netcfg := ""
+				kernelArgs["network-config"] = &netcfg
+
+				m.Cfg.KernelArgs = kernelArgs.String()
+
+				return nil
+			},
+		})
+	}
 
 	err = m.Start(ctx)
 	if err != nil {

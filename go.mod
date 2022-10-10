@@ -2,7 +2,10 @@ module github.com/tamalsaha/learn-firecracker
 
 go 1.19
 
-require github.com/firecracker-microvm/firecracker-go-sdk v1.0.0
+require (
+	github.com/firecracker-microvm/firecracker-go-sdk v1.0.0
+	sigs.k8s.io/yaml v1.2.0
+)
 
 require (
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
