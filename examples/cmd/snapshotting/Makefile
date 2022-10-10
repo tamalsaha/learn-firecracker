@@ -47,7 +47,7 @@ bin/ptp: bin
 	$(call install_go,github.com/containernetworking/plugins/plugins/main/ptp,v1.1.1)
 
 bin/firewall: bin
-	$(call install_go,github.com/containernetworking/plugins/plugins/main/plugins/meta/firewall,v1.1.1)
+	$(call install_go,github.com/containernetworking/plugins/plugins/meta/firewall,v1.1.1)
 
 bin/host-local: bin
 	$(call install_go,github.com/containernetworking/plugins/plugins/ipam/host-local,v1.1.1)
