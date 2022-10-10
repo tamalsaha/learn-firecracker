@@ -203,6 +203,8 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 		}
 	}()
 
+	hostDevName := m.Cfg.NetworkInterfaces[0].StaticConfiguration.HostDevName
+	fmt.Printf("hostDevName: %v\n", hostDevName)
 	vmIP := m.Cfg.NetworkInterfaces[0].StaticConfiguration.IPConfiguration.IPAddr.IP.String()
 	fmt.Printf("IP of VM: %v\n", vmIP)
 
