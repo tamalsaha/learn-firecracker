@@ -2,13 +2,14 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
-
 	"sigs.k8s.io/yaml"
+	"strings"
 )
 
 func main__() {
@@ -20,10 +21,102 @@ func main__() {
 }
 
 func main() {
-	err := buildData("i123")
+	nc, err := BuildNetCfg()
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(nc)
+	
+	//err := buildData("i123")
+	//if err != nil {
+	//	panic(err)
+	//}
+}
+
+func BuildNetCfg() (string, error) {
+	/*
+		version: 2
+		ethernets:
+		  eth0:
+		    match:
+		       macaddress: "AA:FF:00:00:00:01"
+		    addresses:
+		      - 169.254.0.1/16
+		  eth1:
+		    match:
+		      macaddress: "EE:00:00:00:00:__MAC_OCTET__"
+		    addresses:
+		      - __INSTANCE_IP__/24
+		    gateway4: __GATEWAY__
+		    nameservers:
+		      addresses: [ 8.8.4.4, 8.8.8.8 ]
+	*/
+
+	/*
+		# Boot configuration
+		instance_ip=$VMS_NETWORK_PREFIX"."$(( $instance_number + 1 ))
+		network_config_base64=$( \
+			cat conf/cloud-init/network_config.yaml | \
+			./tmpl.sh __INSTANCE_IP__ $instance_ip | \
+			./tmpl.sh __MAC_OCTET__ $mac_octet | \
+			./tmpl.sh __GATEWAY__ $VMS_NETWORK_PREFIX".1" | \
+			gzip --stdout - | \
+			base64 -w 0
+		)
+	*/
+	nc := NetworkConfig{
+		Version: 2,
+		Ethernets: map[string]EthernetConfig{
+			"eth0": {
+				Match: EthernetMatcher{
+					Macaddress: "AA:FF:00:00:00:01",
+				},
+				Addresses: []string{
+					"169.254.0.1/16",
+				},
+				Gateway4:    "",
+				Nameservers: nil,
+			},
+			"eth1": {
+				Match: EthernetMatcher{
+					Macaddress: "EE:00:00:00:00:01", // __MAC_OCTET__
+				},
+				Addresses: []string{
+					"10.68.0.2/24", // __INSTANCE_IP__/24
+				},
+				Gateway4: "10.68.0.1", // __GATEWAY__
+				Nameservers: &Nameservers{
+					Addresses: []string{
+						"1.1.1.1",
+						"8.8.8.8",
+					},
+				},
+			},
+		},
+	}
+	ncBytes, err := yaml.Marshal(nc)
+	if err != nil {
+		return "", err
+	}
+
+	var buf bytes.Buffer
+	zw := gzip.NewWriter(&buf)
+	//// Setting the Header fields is optional.
+	//zw.Name = "a-new-hope.txt"
+	//zw.Comment = "an epic space opera by George Lucas"
+	//zw.ModTime = time.Date(1977, time.May, 25, 0, 0, 0, 0, time.UTC)
+
+	_, err = zw.Write(ncBytes)
+	if err != nil {
+		return "", err
+	}
+
+	if err := zw.Close(); err != nil {
+		return "", err
+	}
+
+	cfg := base64.URLEncoding.EncodeToString(buf.Bytes())
+	return cfg, nil
 }
 
 func buildData(instanceID string) error {
