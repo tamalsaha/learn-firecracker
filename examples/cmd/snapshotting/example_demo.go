@@ -34,7 +34,8 @@ const (
 	// Using default cache directory to ensure collision avoidance on IP allocations
 	cniCacheDir = "/var/lib/cni"
 	networkName = "fcnet"
-	ifName      = "veth0"
+	if0Name     = "veth0"
+	if1Name     = "veth1"
 
 	networkMask string = "/24"
 	subnet      string = "10.168.0.0" + networkMask
@@ -165,19 +166,44 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 	}
 	defer os.Remove(cniConfPath)
 
-	networkInterface := sdk.NetworkInterface{
+	/*
+		WARN[0000] Failed handler "validate.NetworkCfg": cannot specify CNIConfiguration or IPConfiguration when multiple network interfaces are provided: [{StaticConfiguration:0xc00032fe30 CNIConfiguration:<nil> AllowMMDS:true InRateLimiter:<nil> OutRateLimiter:<nil>} {StaticConfiguration:<nil> CNIConfiguration:0xc0000e8790 AllowMMDS:false InRateLimiter:<nil> OutRateLimiter:<nil>}]
+	*/
+	networkInterface0 := sdk.NetworkInterface{
+		StaticConfiguration: &sdk.StaticNetworkConfiguration{
+			// MacAddress:  "",
+			HostDevName: "tap0", // TODO: make it dynamic
+			//IPConfiguration: &sdk.IPConfiguration{
+			//	//IPAddr:      net.IPNet{},
+			//	//Gateway:     nil,
+			//	//Nameservers: nil,
+			//	IfName: "eth0",
+			//},
+		},
+		//CNIConfiguration: &sdk.CNIConfiguration{
+		//	NetworkName: networkName,
+		//	IfName:      if1Name,
+		//	ConfDir:     cniConfDir,
+		//	BinPath:     cniBinPath,
+		//	VMIfName:    "eth0",
+		//},
+		AllowMMDS: true,
+	}
+	networkInterface1 := sdk.NetworkInterface{
 		CNIConfiguration: &sdk.CNIConfiguration{
 			NetworkName: networkName,
-			IfName:      ifName,
+			IfName:      if1Name,
 			ConfDir:     cniConfDir,
 			BinPath:     cniBinPath,
-			VMIfName:    "eth0",
+			VMIfName:    "eth1",
 		},
 	}
 
 	socketFile := fmt.Sprintf("%s.create", socketPath)
 
-	cfg := createNewConfig(socketFile, withNetworkInterface(networkInterface))
+	cfg := createNewConfig(socketFile,
+		withNetworkInterface(networkInterface0),
+		withNetworkInterface(networkInterface1))
 
 	// Use firecracker binary when making machine
 	cmd := sdk.VMCommandBuilder{}.WithSocketPath(socketFile).WithBin(filepath.Join(dir, "firecracker")).Build(ctx)
@@ -302,7 +328,7 @@ func loadSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath, ipToRes
 	networkInterface := sdk.NetworkInterface{
 		CNIConfiguration: &sdk.CNIConfiguration{
 			NetworkName: networkName,
-			IfName:      ifName,
+			IfName:      if0Name,
 			ConfDir:     cniConfDir,
 			BinPath:     cniBinPath,
 			Args:        [][2]string{{"IP", ipToRestore + networkMask}},
