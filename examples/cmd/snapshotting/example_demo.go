@@ -226,6 +226,8 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 		log.Fatal(err)
 	}
 
+	time.Sleep(60 * time.Minute)
+
 	fmt.Println("Creating snapshot...")
 
 	err = m.PauseVM(ctx)
