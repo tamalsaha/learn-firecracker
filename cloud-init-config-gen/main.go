@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"sigs.k8s.io/yaml"
 	"strings"
@@ -21,6 +22,14 @@ func main__() {
 }
 
 func main() {
+	ip := net.ParseIP("192.168.0.100")
+	if ip == nil {
+		return
+	}
+	fmt.Println(MacAddr(ip.To4()))
+}
+
+func main_123() {
 	nc, err := BuildNetCfg()
 	if err != nil {
 		panic(err)
@@ -31,6 +40,16 @@ func main() {
 	//if err != nil {
 	//	panic(err)
 	//}
+}
+
+const hexDigit = "0123456789abcdef"
+
+func MacAddr(b []byte) string {
+	s := make([]byte, len(b)*3)
+	for i, tn := range b {
+		s[i*3], s[i*3+1], s[i*3+2] = ':', hexDigit[tn>>4], hexDigit[tn&0xf]
+	}
+	return "AA:FF" + string(s)
 }
 
 func BuildNetCfg() (string, error) {
