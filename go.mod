@@ -7,6 +7,7 @@ require (
 	github.com/firecracker-microvm/firecracker-go-sdk v1.0.0
 	github.com/pkg/errors v0.9.1
 	github.com/vishvananda/netlink v1.1.1-0.20210330154013-f5de75959ad5
+	gomodules.xyz/oneliners v0.0.0-20200730052119-bccc7758058b
 	sigs.k8s.io/yaml v1.2.0
 )
 
