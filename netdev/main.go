@@ -11,7 +11,6 @@ import (
 sudo ip tuntap add tap0 mode tap
 sudo ip addr add 172.16.0.1/24 dev tap0
 sudo ip link set tap0 up
-
 */
 
 func main() {
@@ -19,7 +18,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
+	fmt.Println(nl.Type())
 }
 
 func CreateTap(name string, mtu int, ownerUID, ownerGID int) (netlink.Link, error) {
@@ -65,7 +64,7 @@ func CreateTap(name string, mtu int, ownerUID, ownerGID int) (netlink.Link, erro
 	//	return nil, fmt.Errorf("failed to set tap device MTU to %d: %w", mtu, err)
 	//}
 
-	addr, err := netlink.ParseAddr("172.25.0.1/24")
+	addr, err := netlink.ParseAddr("172.20.0.1/24")
 	if err != nil {
 		return nil, err
 	}
