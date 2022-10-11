@@ -28,7 +28,7 @@ func main() {
 		fmt.Printf(err.Error())
 	}
 	oneliners.FILE()
-	err = netlink.LinkSetMaster(eth1, mybridge)
+	err = netlink.LinkSetMaster(mybridge, eth1)
 	oneliners.FILE(err)
 }
 
