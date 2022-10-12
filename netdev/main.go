@@ -7,12 +7,6 @@ import (
 	_ "gomodules.xyz/oneliners"
 )
 
-/*
-sudo ip tuntap add tap0 mode tap
-sudo ip addr add 172.16.0.1/24 dev tap0
-sudo ip link set tap0 up
-*/
-
 func main() {
 	nl, err := CreateTap("tap0", 0, 0, 0)
 	if err != nil {
@@ -21,6 +15,11 @@ func main() {
 	fmt.Println(nl.Type())
 }
 
+/*
+sudo ip tuntap add tap0 mode tap
+sudo ip addr add 172.16.0.1/24 dev tap0
+sudo ip link set tap0 up
+*/
 func CreateTap(name string, mtu int, ownerUID, ownerGID int) (netlink.Link, error) {
 	tapLinkAttrs := netlink.NewLinkAttrs()
 	tapLinkAttrs.Name = name
