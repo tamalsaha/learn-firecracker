@@ -72,6 +72,7 @@ func CreateTap(name string, mtu int, ownerUID, ownerGID int) (netlink.Link, erro
 	err = netlink.AddrAdd(tapLink, addr)
 	if err != nil {
 		oneliners.FILE(err)
+		fmt.Printf("%T\n", err)
 		return nil, err
 	}
 
