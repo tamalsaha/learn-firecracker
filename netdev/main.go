@@ -39,6 +39,7 @@ func CreateTap(name string, mtu int, ownerUID, ownerGID int) (netlink.Link, erro
 
 	err := netlink.LinkAdd(tapLink)
 	if err != nil {
+		oneliners.FILE(err)
 		return nil, fmt.Errorf("failed to create tap device: %w", err)
 	}
 
@@ -65,15 +66,18 @@ func CreateTap(name string, mtu int, ownerUID, ownerGID int) (netlink.Link, erro
 
 	addr, err := netlink.ParseAddr("172.20.0.1/24")
 	if err != nil {
+		oneliners.FILE(err)
 		return nil, err
 	}
 	err = netlink.AddrAdd(tapLink, addr)
 	if err != nil {
+		oneliners.FILE(err)
 		return nil, err
 	}
 
 	err = netlink.LinkSetUp(tapLink)
 	if err != nil {
+		oneliners.FILE(err)
 		return nil, fmt.Errorf("failed to set tap up: %w", err)
 	}
 
