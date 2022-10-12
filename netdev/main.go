@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/vishvananda/netlink"
 	"gomodules.xyz/oneliners"
 	_ "gomodules.xyz/oneliners"
+	"syscall"
 )
 
 func main() {
@@ -72,6 +74,7 @@ func CreateTap(name string, mtu int, ownerUID, ownerGID int) (netlink.Link, erro
 	err = netlink.AddrAdd(tapLink, addr)
 	if err != nil {
 		oneliners.FILE(err)
+		fmt.Println("errors.Is(err, syscall.EEXIST) = ", errors.Is(err, syscall.EEXIST))
 		fmt.Printf("%T\n", err)
 		return nil, err
 	}
