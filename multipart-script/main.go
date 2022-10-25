@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"net/textproto"
+	"sort"
 )
 
 // https://gist.github.com/mattetti/5914158/f4d1393d83ebedc682a3c8e7bdc6b49670083b84
@@ -51,6 +52,31 @@ func upload() error {
 	err := writer.SetBoundary(`//`)
 	if err != nil {
 		return err
+	}
+
+	/*
+		Content-Type: multipart/mixed; boundary="//"
+		MIME-Version: 1.0
+
+	*/
+
+	mpHeader := textproto.MIMEHeader{}
+	// Set the Content-Type header
+	mpHeader.Set("Content-Type", `multipart/mixed; boundary="//"`)
+	mpHeader.Set("MIME-Version", `1.0`)
+
+	{
+		keys := make([]string, 0, len(mpHeader))
+		for k := range mpHeader {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			for _, v := range mpHeader[k] {
+				fmt.Fprintf(body, "%s: %s\r\n", k, v)
+			}
+		}
+		fmt.Fprintf(body, "\r\n")
 	}
 
 	// Metadata part
