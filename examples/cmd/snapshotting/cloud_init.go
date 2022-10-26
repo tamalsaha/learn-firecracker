@@ -104,7 +104,7 @@ func BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1 string) (string, error) {
 	return cfg, nil
 }
 
-func buildData(instanceID string) error {
+func BuildData(instanceID string) error {
 	/*
 		#cloud-config
 		users:
