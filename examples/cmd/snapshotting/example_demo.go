@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"path/filepath"
 	"time"
@@ -154,7 +155,7 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 	}
 
 	cniConfDir := filepath.Join(dir, "cni.conf")
-	cniBinPath := []string{filepath.Join(dir, "bin")} // CNI binaries
+	// cniBinPath := []string{filepath.Join(dir, "bin")} // CNI binaries
 
 	// Network config
 	cniConfPath := fmt.Sprintf("%s/%s.conflist", cniConfDir, networkName)
@@ -164,19 +165,86 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 	}
 	defer os.Remove(cniConfPath)
 
-	networkInterface := sdk.NetworkInterface{
-		CNIConfiguration: &sdk.CNIConfiguration{
-			NetworkName: networkName,
-			IfName:      ifName,
-			ConfDir:     cniConfDir,
-			BinPath:     cniBinPath,
-			VMIfName:    "eth0",
+	//networkInterface := sdk.NetworkInterface{
+	//	StaticConfiguration: &sdk.StaticNetworkConfiguration{
+	//		MacAddress:      "",
+	//		HostDevName:     "",
+	//		IPConfiguration: nil,
+	//	},
+	//	CNIConfiguration: &sdk.CNIConfiguration{
+	//		NetworkName: networkName,
+	//		IfName:      ifName,
+	//		ConfDir:     cniConfDir,
+	//		BinPath:     cniBinPath,
+	//		VMIfName:    "eth0",
+	//	},
+	//}
+
+	instanceID := 0
+	VMS_NETWORK_PREFIX := "172.26.0"
+
+	egressIface, err := GetEgressInterface()
+	if err != nil {
+		panic(err)
+	}
+
+	// binary.Write(a, binary.LittleEndian, myInt)
+	ip0 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2)
+	ip1 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2+1)
+
+	fmt.Println("instanceID:", instanceID)
+	eth0Mac := MacAddr(net.ParseIP(ip0).To4())
+	fmt.Println("ip0:", ip0, eth0Mac)
+	eth1Mac := MacAddr(net.ParseIP(ip1).To4())
+	fmt.Println("ip1:", ip1, eth1Mac)
+
+	tap0 := fmt.Sprintf("tap%d", (instanceID+1)*2)
+	tap1 := fmt.Sprintf("tap%d", (instanceID+1)*2+1)
+
+	fmt.Println(tap0, tap1)
+	if _, err := CreateTap(tap0, ""); err != nil {
+		panic(err)
+	}
+	if _, err := CreateTap(tap1, ip0+"/24"); err != nil {
+		panic(err)
+	}
+	if err = SetupIPTables(egressIface, tap1); err != nil {
+		panic(err)
+	}
+
+	_, err = BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
+	if err != nil {
+		panic(err)
+	}
+
+	nf0 := sdk.NetworkInterface{
+		StaticConfiguration: &sdk.StaticNetworkConfiguration{
+			MacAddress:  eth0Mac,
+			HostDevName: tap0,
+			IPConfiguration: &sdk.IPConfiguration{
+				IPAddr:      net.IPNet{IP: net.ParseIP("169.254.169.254"), Mask: net.CIDRMask(16, 16)},
+				Gateway:     nil,
+				Nameservers: nil,
+				IfName:      "eth0",
+			},
+		},
+	}
+	nf1 := sdk.NetworkInterface{
+		StaticConfiguration: &sdk.StaticNetworkConfiguration{
+			MacAddress:  eth1Mac,
+			HostDevName: tap1,
+			IPConfiguration: &sdk.IPConfiguration{
+				IPAddr:      net.IPNet{IP: net.ParseIP(ip1), Mask: net.CIDRMask(24, 8)},
+				Gateway:     net.ParseIP(ip0),
+				Nameservers: []string{"1.1.1.1", "8.8.8.8"},
+				IfName:      "eth1",
+			},
 		},
 	}
 
 	socketFile := fmt.Sprintf("%s.create", socketPath)
 
-	cfg := createNewConfig(socketFile, withNetworkInterface(networkInterface))
+	cfg := createNewConfig(socketFile, withNetworkInterface(nf0), withNetworkInterface(nf1))
 	// cfg.KernelArgs
 
 	// Use firecracker binary when making machine
@@ -207,7 +275,10 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 				ds := "nocloud-net;s=http://169.254.169.254/latest/"
 				kernelArgs["ds"] = &ds
 
-				netcfg := ""
+				netcfg, err := BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
+				if err != nil {
+					return err
+				}
 				kernelArgs["network-config"] = &netcfg
 
 				m.Cfg.KernelArgs = kernelArgs.String()
@@ -215,6 +286,17 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 				return nil
 			},
 		})
+	}
+
+	{
+		mmds, err := BuildData(fmt.Sprintf("%d", instanceID))
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = m.SetMetadata(ctx, string(mmds))
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	err = m.Start(ctx)
@@ -461,12 +543,6 @@ func main__() {
 
 	snapPath := filepath.Join(dir, "snapshotssh/SnapFile")
 	memPath := filepath.Join(dir, "snapshotssh/MemFile")
-
-	egressIface, err := GetEgressInterface()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(egressIface)
 
 	ctx := context.Background()
 

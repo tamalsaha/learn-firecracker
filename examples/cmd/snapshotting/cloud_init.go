@@ -104,7 +104,7 @@ func BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1 string) (string, error) {
 	return cfg, nil
 }
 
-func BuildData(instanceID string) error {
+func BuildData(instanceID string) ([]byte, error) {
 	/*
 		#cloud-config
 		users:
@@ -148,7 +148,7 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 
 	udBytes, err := PrepareCloudInitUserData(userData, script)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	md := Metadata{
@@ -165,12 +165,12 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 		UserData: string(udBytes),
 	}
 
-	data, err := json.Marshal(lc)
-	if err != nil {
-		return err
-	}
-	fmt.Println(string(data))
-	return nil
+	return json.Marshal(lc)
+	//if err != nil {
+	//	return err
+	//}
+	//fmt.Println(string(data))
+	//return nil
 }
 
 // https://github.com/tamalsaha.keys
