@@ -43,7 +43,7 @@ Content-Disposition: attachment; filename="userdata.txt"
 --//--
 
 */
-func upload() error {
+func PrepareCloudInitUserData() (string, error) {
 	// New empty buffer
 	body := &bytes.Buffer{}
 	// Creates a new multipart Writer with a random boundary
@@ -51,7 +51,7 @@ func upload() error {
 	writer := multipart.NewWriter(body)
 	err := writer.SetBoundary(`//`)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	/*
@@ -90,7 +90,7 @@ func upload() error {
 	// Create new multipart part
 	cloudInitPart, err := writer.CreatePart(cloudInitHeader)
 	if err != nil {
-		return err
+		return "", err
 	}
 	// Write the part body
 	cloudInitPart.Write([]byte(`#cloud-config
@@ -112,7 +112,7 @@ write_files:
 	// Create new multipart part
 	scriptPart, err := writer.CreatePart(scriptHeader)
 	if err != nil {
-		return err
+		return "", err
 	}
 	// Write the part body
 	scriptPart.Write([]byte(`#!/bin/bash
@@ -124,13 +124,11 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 	// Finish constructing the multipart request body
 	writer.Close()
 
-	fmt.Println(string(body.Bytes()))
-
-	return nil
+	return string(body.Bytes()), nil
 }
 
 func main() {
-	if err := upload(); err != nil {
+	if _, err := PrepareCloudInitUserData(); err != nil {
 		panic(err)
 	}
 }
