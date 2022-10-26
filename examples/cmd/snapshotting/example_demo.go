@@ -424,7 +424,7 @@ func loadSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath, ipToRes
 	fmt.Println(b.String())
 }
 
-func main() {
+func main__() {
 	// Check for kvm and root access
 	err := unix.Access("/dev/kvm", unix.W_OK)
 	if err != nil {
