@@ -18,17 +18,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/tamalsaha/learn-firecracker/vmlib"
 	"log"
 	"os"
 	"path/filepath"
 	"time"
 
+	sdk "github.com/firecracker-microvm/firecracker-go-sdk"
+	"github.com/firecracker-microvm/firecracker-go-sdk/client/models"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/sys/unix"
-
-	sdk "github.com/firecracker-microvm/firecracker-go-sdk"
-	models "github.com/firecracker-microvm/firecracker-go-sdk/client/models"
 )
 
 const (
@@ -465,7 +463,7 @@ func main() {
 	snapPath := filepath.Join(dir, "snapshotssh/SnapFile")
 	memPath := filepath.Join(dir, "snapshotssh/MemFile")
 
-	egressIface, err := vmlib.GetEgressInterface()
+	egressIface, err := GetEgressInterface()
 	if err != nil {
 		log.Fatal(err)
 	}

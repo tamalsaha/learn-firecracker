@@ -1,44 +1,20 @@
 package main
 
 import (
-	"github.com/coreos/go-iptables/iptables"
-	_ "github.com/coreos/go-iptables/iptables"
-	"github.com/pkg/errors"
 	"os"
+
+	"github.com/coreos/go-iptables/iptables"
+	"github.com/pkg/errors"
+	"gomodules.xyz/go-sh"
 )
 
-func main() {
-	err := SetupIPTables("bond0", "tap0")
-	if err != nil {
-		panic(err)
-	}
-}
-
-/*
-function create_tap() {
-	local device=$1
-
-	ip addr show $device > /dev/null 2>&1
-	if [ $? -ne 0 ]
-	then
-		sudo ip tuntap add dev $device mode tap
-        	sudo ip link set dev $device up
-	fi
-}
-
-function create_vm_taps() {
-	local tap_metadata=$1
-	local tap_main=$2
-
-	create_tap $tap_metadata
-	create_tap $tap_main
-
-	sudo ip link set $tap_main master $FIRECRACKER_BRIDGE
-}
-*/
-
-func TipyTap() error {
-	return nil
+func GetEgressInterface() (string, error) {
+	egressIface, err := sh.
+		Command("ip", "route", "get", "1.1.1.1").
+		Command("grep", "uid").
+		Command("sed", `s/.* dev \([^ ]*\) .*/\1/`).
+		Output()
+	return string(egressIface), err
 }
 
 // Host iface bond0
