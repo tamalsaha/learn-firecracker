@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/tamalsaha/learn-firecracker/vmlib"
 	"log"
 	"os"
 	"path/filepath"
@@ -463,6 +464,12 @@ func main() {
 
 	snapPath := filepath.Join(dir, "snapshotssh/SnapFile")
 	memPath := filepath.Join(dir, "snapshotssh/MemFile")
+
+	egressIface, err := vmlib.GetEgressInterface()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(egressIface)
 
 	ctx := context.Background()
 
