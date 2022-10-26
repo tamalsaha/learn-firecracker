@@ -6,6 +6,9 @@ This test requires both KVM and root access.
 
 ## 
 
+- Install go
+- Install docker
+
 ```
 $ cd /root
 $ git clone https://github.com/firecracker-microvm/firecracker.git
