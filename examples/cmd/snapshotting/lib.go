@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/vishvananda/netlink"
 	"net"
 	"os"
 	"syscall"
+
+	"github.com/vishvananda/netlink"
 
 	"github.com/coreos/go-iptables/iptables"
 	"github.com/pkg/errors"
@@ -34,7 +35,7 @@ func SetupIPTables(iface, tapDev string) error {
 
 	// sudo sysctl -w net.ipv4.ip_forward=1 > /dev/null
 	filename := "/proc/sys/net/ipv4/ip_forward"
-	if err := os.WriteFile(filename, []byte("1"), 0644); err != nil {
+	if err := os.WriteFile(filename, []byte("1"), 0o644); err != nil {
 		return errors.Wrapf(err, "failed to write file: %s", filename)
 	}
 
@@ -118,9 +119,9 @@ func CreateTap(name, cidr string) (netlink.Link, error) {
 		}
 		err = netlink.AddrAdd(tapLink, addr)
 		if err != nil && !errors.Is(err, syscall.EEXIST) {
-			//oneliners.FILE(err)
-			//fmt.Println("errors.Is(err, syscall.EEXIST) = ", errors.Is(err, syscall.EEXIST))
-			//fmt.Printf("%T\n", err)
+			// oneliners.FILE(err)
+			// fmt.Println("errors.Is(err, syscall.EEXIST) = ", errors.Is(err, syscall.EEXIST))
+			// fmt.Printf("%T\n", err)
 			return nil, err
 		}
 	}
@@ -157,8 +158,10 @@ func main() {
 	ip1 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2+1)
 
 	fmt.Println("instanceID:", instanceID)
-	fmt.Println("ip0:", ip0, MacAddr(net.ParseIP(ip0).To4()))
-	fmt.Println("ip1:", ip1, MacAddr(net.ParseIP(ip1).To4()))
+	eth0Mac := MacAddr(net.ParseIP(ip0).To4())
+	fmt.Println("ip0:", ip0, eth0Mac)
+	eth1Mac := MacAddr(net.ParseIP(ip1).To4())
+	fmt.Println("ip1:", ip1, eth1Mac)
 
 	tap0 := fmt.Sprintf("tap%d", (instanceID+1)*2)
 	tap1 := fmt.Sprintf("tap%d", (instanceID+1)*2+1)
@@ -173,5 +176,9 @@ func main() {
 	if err = SetupIPTables(egressIface, tap1); err != nil {
 		panic(err)
 	}
-	
+
+	_, err = BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
+	if err != nil {
+		panic(err)
+	}
 }

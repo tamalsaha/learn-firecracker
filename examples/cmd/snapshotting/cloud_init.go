@@ -8,11 +8,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"sigs.k8s.io/yaml"
 	"strings"
+
+	"sigs.k8s.io/yaml"
 )
 
-func BuildNetCfg() (string, error) {
+func BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1 string) (string, error) {
 	/*
 		version: 2
 		ethernets:
@@ -48,22 +49,22 @@ func BuildNetCfg() (string, error) {
 		Ethernets: map[string]EthernetConfig{
 			"eth0": {
 				Match: EthernetMatcher{
-					Macaddress: "AA:FF:00:00:00:01",
+					Macaddress: eth0Mac,
 				},
 				Addresses: []string{
-					"169.254.0.1/16",
+					"169.254.169.254/16",
 				},
 				Gateway4:    "",
 				Nameservers: nil,
 			},
 			"eth1": {
 				Match: EthernetMatcher{
-					Macaddress: "EE:00:00:00:00:01", // __MAC_OCTET__
+					Macaddress: eth1Mac, // __MAC_OCTET__
 				},
 				Addresses: []string{
-					"10.68.0.2/24", // __INSTANCE_IP__/24
+					ip1 + "/24", // __INSTANCE_IP__/24
 				},
-				Gateway4: "10.68.0.1", // __GATEWAY__
+				Gateway4: ip0, // __GATEWAY__
 				Nameservers: &Nameservers{
 					Addresses: []string{
 						"1.1.1.1",
@@ -77,6 +78,8 @@ func BuildNetCfg() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	fmt.Println(string(ncBytes))
 
 	var buf bytes.Buffer
 	zw := gzip.NewWriter(&buf)

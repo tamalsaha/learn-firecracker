@@ -66,7 +66,7 @@ func writeCNIConfWithHostLocalSubnet(path, networkName, subnet string) error {
 			"type": "tc-redirect-tap"
 		  }
 		]
-	  }`, networkName, subnet)), 0644)
+	  }`, networkName, subnet)), 0o644)
 }
 
 type configOpt func(*sdk.Config)
@@ -189,7 +189,6 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 	defer os.Remove(socketFile)
 
 	{
-
 		m.Handlers.FcInit.Swap(sdk.Handler{
 			Name: sdk.SetupKernelArgsHandlerName,
 			Fn: func(ctx context.Context, m *sdk.Machine) error {
@@ -441,7 +440,7 @@ func main__() {
 	}
 
 	cniConfDir := filepath.Join(dir, "cni.conf")
-	err = os.Mkdir(cniConfDir, 0777)
+	err = os.Mkdir(cniConfDir, 0o777)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -455,7 +454,7 @@ func main__() {
 	defer os.Remove(tempdir)
 	socketPath := filepath.Join(tempdir, "snapshotssh")
 
-	err = os.Mkdir("snapshotssh", 0777)
+	err = os.Mkdir("snapshotssh", 0o777)
 	if err != nil && !errors.Is(err, os.ErrExist) {
 		log.Fatal(err)
 	}
