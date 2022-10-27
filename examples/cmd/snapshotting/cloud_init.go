@@ -118,7 +118,7 @@ func BuildData(instanceID string) ([]byte, error) {
 	*/
 	keys, err := getSSHPubKeys("tamalsaha")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	userData := UserData{
 		Users: []User{
@@ -157,7 +157,7 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 	}
 	mdBytes, err := yaml.Marshal(md)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	lc := LatestConfig{
