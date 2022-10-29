@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -104,7 +103,7 @@ func BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1 string) (string, error) {
 	return cfg, nil
 }
 
-func BuildData(instanceID string) ([]byte, error) {
+func BuildData(instanceID string) (*LatestConfig, error) {
 	/*
 		#cloud-config
 		users:
@@ -160,12 +159,12 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 		return nil, err
 	}
 
-	lc := LatestConfig{
+	return &LatestConfig{
 		MetaData: string(mdBytes),
 		UserData: string(udBytes),
-	}
+	}, nil
 
-	return json.Marshal(lc)
+	// return json.Marshal(lc)
 	//if err != nil {
 	//	return err
 	//}

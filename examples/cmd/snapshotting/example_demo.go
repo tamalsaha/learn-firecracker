@@ -293,7 +293,7 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = m.SetMetadata(ctx, string(mmds))
+		err = m.SetMetadata(ctx, mmds)
 		if err != nil {
 			log.Fatal(err)
 		}
