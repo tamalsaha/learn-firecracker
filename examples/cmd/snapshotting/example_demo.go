@@ -49,7 +49,7 @@ const (
 	MMDS_SUBNET = 16
 
 	VMS_NETWORK_PREFIX = "172.26.0"
-	VMS_NETWORK_SUBNET = 31
+	VMS_NETWORK_SUBNET = 24
 )
 
 func writeCNIConfWithHostLocalSubnet(path, networkName, subnet string) error {
