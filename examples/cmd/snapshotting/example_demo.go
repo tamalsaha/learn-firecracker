@@ -303,6 +303,8 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 				}
 				ipBootParam2 := ipBootParam(m.Cfg.NetworkInterfaces[len(m.Cfg.NetworkInterfaces)-1].StaticConfiguration.IPConfiguration)
 				oneliners.FILE("IP:", ipBootParam2)
+				// https://linuxlink.timesys.com/docs/static_ip
+				// The Ethernet device eth0 will be automatically configured using BOOTP.
 				ipBootParam2 = strings.ReplaceAll(ipBootParam2, ":off:", ":bootp:")
 				kernelArgs["ip"] = &ipBootParam2
 
