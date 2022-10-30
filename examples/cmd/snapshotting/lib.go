@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"syscall"
 
 	"github.com/coreos/go-iptables/iptables"
@@ -18,7 +19,7 @@ func GetEgressInterface() (string, error) {
 		Command("grep", "uid").
 		Command("sed", `s/.* dev \([^ ]*\) .*/\1/`).
 		Output()
-	return string(egressIface), err
+	return strings.TrimSpace(string(egressIface)), err
 }
 
 // Host iface bond0

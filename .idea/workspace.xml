@@ -4,121 +4,68 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a9f6a2e-aaff-4a9b-8345-656642b3f499" name="Changes" comment="">
+    <list default="true" id="d68fcd6e-58c3-4560-b88c-f1cd70d94193" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/cmd/snapshotting/lib.go" beforeDir="false" afterPath="$PROJECT_DIR$/examples/cmd/snapshotting/lib.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Go File" />
-      </list>
-    </option>
-  </component>
   <component name="GOROOT" url="file:///usr/local/go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/examples/cmd/snapshotting/vendor/github.com/firecracker-microvm/firecracker-go-sdk/client/models/network_interface.go" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/examples/cmd/snapshotting/vendor/github.com/firecracker-microvm/firecracker-go-sdk/handlers.go" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/examples/cmd/snapshotting/vendor/github.com/firecracker-microvm/firecracker-go-sdk/machine.go" root0="SKIP_INSPECTION" />
-  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2GeOYhIOjBWcE5ttIyfh0XFTMIP" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectId" id="2GqjjoO4Qd43Tfs17RHkszFbQAR" />
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.vendoring.notification.had.been.shown&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;configurable..is.expanded&quot;: &quot;false&quot;,
-    &quot;configurable.GoLibrariesConfigurable.is.expanded&quot;: &quot;true&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/tamal&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.go.vendoring.notification.had.been.shown": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/Users/tamal",
+    "settings.editor.selected.configurable": "com.goide.configuration.GoProjectSettingsConfigurable"
   }
-}</component>
-  <component name="RunManager" selected="Go Build.go build github.com/tamalsaha/learn-firecracker/out-eface">
-    <configuration default="true" type="OPA_TEST_RUN_CONFIGURATION" factoryName="Opa configuration factory">
-      <option name="additionalargs" value="" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build github.com/tamalsaha/learn-firecracker/ip_setup" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="learn-firecracker" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/tamalsaha/learn-firecracker/ip_setup" />
+      <go_parameters value="-i" />
+      <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/ip_setup/main.go" />
+      <filePath value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
-    <configuration name="go build github.com/tamalsaha/learn-firecracker/out-eface" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
       <module name="learn-firecracker" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/tamalsaha/learn-firecracker/out-eface" />
+      <go_parameters value="-i" />
+      <kind value="DIRECTORY" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/out-eface/main.go" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
       <method v="2" />
     </configuration>
-    <configuration name="go build main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="learn-firecracker" />
-      <working_directory value="$PROJECT_DIR$/examples/cmd/snapshotting" />
-      <kind value="PACKAGE" />
-      <package value="main" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/examples/cmd/snapshotting/lib.go" />
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Go Build.go build github.com/tamalsaha/learn-firecracker/out-eface" />
-        <item itemvalue="Go Build.go build main" />
-        <item itemvalue="Go Build.go build github.com/tamalsaha/learn-firecracker/ip_setup" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
