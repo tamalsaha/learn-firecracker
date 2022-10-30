@@ -22,6 +22,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	current "github.com/containernetworking/cni/pkg/types/100"
@@ -302,6 +303,7 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 				}
 				ipBootParam2 := ipBootParam(m.Cfg.NetworkInterfaces[len(m.Cfg.NetworkInterfaces)-1].StaticConfiguration.IPConfiguration)
 				oneliners.FILE("IP:", ipBootParam2)
+				ipBootParam2 = strings.ReplaceAll(ipBootParam2, ":off:", ":bootp:")
 				kernelArgs["ip"] = &ipBootParam2
 
 				m.Cfg.KernelArgs = kernelArgs.String()
