@@ -550,6 +550,16 @@ sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
 sudo iptables -t nat -A POSTROUTING -o bond0 -j MASQUERADE
 sudo iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 sudo iptables -A FORWARD -i tap3 -o bond0 -j ACCEPT
+
+$ firectl --kernel=./vmlinux --root-drive=./root-drive-with-ssh.img --kernel-opts="console=ttyS0 noapic reboot=k panic=1 pci=off nomodules rw" --tap-device=tap3/AA:FC:ac:1a:00:03 --tap-device=tap2/AA:FC:ac:1a:00:02
+
+# ip addr add 172.26.0.3/24 dev eth0
+# ip link set eth0 up
+# ip route add default via 172.26.0.2 dev eth0
+
+# MMDS
+ip link set eth1 up
+ip route add 169.254.169.254 dev eth1
 */
 func main() {
 	oneliners.FILE()
