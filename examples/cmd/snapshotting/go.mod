@@ -49,4 +49,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/firecracker-microvm/firecracker-go-sdk => github.com/tamalsaha/firecracker-go-sdk v0.0.0-20221030090942-f59451dbf673
+replace github.com/firecracker-microvm/firecracker-go-sdk => github.com/tamalsaha/firecracker-go-sdk v0.0.0-20221030105818-38ad677bca8b

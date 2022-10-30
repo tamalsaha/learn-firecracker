@@ -249,6 +249,8 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 	socketFile := fmt.Sprintf("%s.create", socketPath)
 
 	cfg := createNewConfig(socketFile, withNetworkInterface(nf0), withNetworkInterface(nf1))
+	cfg.MmdsAddress = net.ParseIP(MMDS_IP)
+	cfg.MmdsVersion = sdk.MMDSv2
 
 	// Use firecracker binary when making machine
 	cmd := sdk.VMCommandBuilder{}.WithSocketPath(socketFile).WithBin(filepath.Join(dir, "firecracker")).Build(ctx)

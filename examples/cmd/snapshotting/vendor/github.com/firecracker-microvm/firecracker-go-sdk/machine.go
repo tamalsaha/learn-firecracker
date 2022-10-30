@@ -948,7 +948,12 @@ func (m *Machine) setMmdsConfig(ctx context.Context, address net.IP, ifaces Netw
 	}
 	for id, iface := range ifaces {
 		if iface.AllowMMDS {
-			mmdsCfg.NetworkInterfaces = append(mmdsCfg.NetworkInterfaces, strconv.Itoa(id+1))
+			ifaceID := strconv.Itoa(id + 1)
+			if iface.StaticConfiguration != nil &&
+				iface.StaticConfiguration.IPConfiguration != nil {
+				ifaceID = iface.StaticConfiguration.IPConfiguration.IfName
+			}
+			mmdsCfg.NetworkInterfaces = append(mmdsCfg.NetworkInterfaces, ifaceID)
 		}
 	}
 	// MMDS is tightly coupled with a network interface, which allows MMDS requests.
