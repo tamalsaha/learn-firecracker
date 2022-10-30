@@ -14,16 +14,18 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	current "github.com/containernetworking/cni/pkg/types/100"
 	sdk "github.com/firecracker-microvm/firecracker-go-sdk"
@@ -254,7 +256,13 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 	cfg.MmdsVersion = sdk.MMDSv2
 
 	// Use firecracker binary when making machine
-	cmd := sdk.VMCommandBuilder{}.WithSocketPath(socketFile).WithBin(filepath.Join(dir, "firecracker")).Build(ctx)
+	cmd := sdk.VMCommandBuilder{}.
+		WithBin(filepath.Join(dir, "firecracker")).
+		WithSocketPath(socketFile).
+		WithStdin(os.Stdin).
+		WithStdout(os.Stdout).
+		WithStderr(os.Stderr).
+		Build(ctx)
 
 	m, err := sdk.NewMachine(ctx, cfg, sdk.WithProcessRunner(cmd))
 	if err != nil {
@@ -356,190 +364,88 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 	vmIP := m.Cfg.NetworkInterfaces[len(m.Cfg.NetworkInterfaces)-1].StaticConfiguration.IPConfiguration.IPAddr.IP.String()
 	fmt.Printf("IP of VM: %v\n", vmIP)
 
-	sshKeyPath := filepath.Join(dir, "root-drive-ssh-key")
+	installSignalHandlers(ctx, m)
 
-	var client *ssh.Client
-	for i := 0; i < maxRetries; i++ {
-		client, err = connectToVM(m, sshKeyPath)
-		if err != nil {
-			time.Sleep(backoffTimeMs * time.Millisecond)
-		} else {
-			break
-		}
+	// wait for the VMM to exit
+	if err := m.Wait(ctx); err != nil {
+		log.Errorf("Wait returned an error %s", err)
 	}
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer client.Close()
+	log.Printf("Start machine was happy")
 
-	session, err := client.NewSession()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer session.Close()
+	//sshKeyPath := filepath.Join(dir, "root-drive-ssh-key")
+	//
+	//var client *ssh.Client
+	//for i := 0; i < maxRetries; i++ {
+	//	client, err = connectToVM(m, sshKeyPath)
+	//	if err != nil {
+	//		time.Sleep(backoffTimeMs * time.Millisecond)
+	//	} else {
+	//		break
+	//	}
+	//}
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//defer client.Close()
+	//
+	//session, err := client.NewSession()
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//defer session.Close()
+	//
+	//fmt.Println(`Sending "sleep 422" command...`)
+	//err = session.Start(`sleep 422`)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
-	fmt.Println(`Sending "sleep 422" command...`)
-	err = session.Start(`sleep 422`)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	time.Sleep(60 * time.Minute)
-
-	fmt.Println("Creating snapshot...")
-
-	err = m.PauseVM(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = m.CreateSnapshot(ctx, memPath, snapPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = m.ResumeVM(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
+	//time.Sleep(60 * time.Minute)
+	//
+	//fmt.Println("Creating snapshot...")
+	//
+	//err = m.PauseVM(ctx)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//
+	//err = m.CreateSnapshot(ctx, memPath, snapPath)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//
+	//err = m.ResumeVM(ctx)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
 	fmt.Println("Snapshot created")
 	return vmIP
 }
 
-func loadSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath, ipToRestore string) {
-	var ipFreed bool = false
-	var err error
+// Install custom signal handlers:
+func installSignalHandlers(ctx context.Context, m *sdk.Machine) {
+	go func() {
+		// Clear some default handlers installed by the firecracker SDK:
+		signal.Reset(os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
 
-	for i := 0; i < maxRetries; i++ {
-		// Wait till the file no longer exists (i.e. os.Stat returns an error)
-		if _, err = os.Stat(fmt.Sprintf("%s/networks/%s/%s", cniCacheDir, networkName, ipToRestore)); err == nil {
-			time.Sleep(backoffTimeMs * time.Millisecond)
-		} else {
-			ipFreed = true
-			break
-		}
-	}
-
-	if errors.Is(err, os.ErrNotExist) {
-		err = nil
-	} else if !ipFreed {
-		err = fmt.Errorf("IP %v was not freed", ipToRestore)
-	}
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cniConfDir := filepath.Join(dir, "cni.conf")
-	cniBinPath := []string{filepath.Join(dir, "bin")} // CNI binaries
-
-	// Network config, using the previous machine's IP
-	cniConfPath := fmt.Sprintf("%s/%s.conflist", cniConfDir, networkName)
-	err = writeCNIConfWithHostLocalSubnet(cniConfPath, networkName, subnet)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.Remove(cniConfPath)
-
-	networkInterface := sdk.NetworkInterface{
-		CNIConfiguration: &sdk.CNIConfiguration{
-			NetworkName: networkName,
-			IfName:      ifName,
-			ConfDir:     cniConfDir,
-			BinPath:     cniBinPath,
-			Args:        [][2]string{{"IP", ipToRestore + networkMask}},
-			VMIfName:    "eth0",
-		},
-	}
-
-	driveID := "root"
-	isRootDevice := true
-	isReadOnly := false
-	rootfsPath := "root-drive-with-ssh.img"
-
-	socketFile := fmt.Sprintf("%s.load", socketPath)
-	cfg := sdk.Config{
-		SocketPath: socketPath + ".load",
-		Drives: []models.Drive{
-			{
-				DriveID:      &driveID,
-				IsRootDevice: &isRootDevice,
-				IsReadOnly:   &isReadOnly,
-				PathOnHost:   &rootfsPath,
-			},
-		},
-		NetworkInterfaces: []sdk.NetworkInterface{
-			networkInterface,
-		},
-	}
-
-	// Use the firecracker binary
-	cmd := sdk.VMCommandBuilder{}.WithSocketPath(socketFile).WithBin(filepath.Join(dir, "firecracker")).Build(ctx)
-
-	m, err := sdk.NewMachine(ctx, cfg, sdk.WithProcessRunner(cmd), sdk.WithSnapshot(memPath, snapPath))
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.Remove(socketFile)
-
-	err = m.Start(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer func() {
-		if err := m.StopVMM(); err != nil {
-			log.Fatal(err)
+		for {
+			switch s := <-c; {
+			case s == syscall.SIGTERM || s == os.Interrupt:
+				log.Printf("Caught signal: %s, requesting clean shutdown", s.String())
+				if err := m.Shutdown(ctx); err != nil {
+					log.Errorf("An error occurred while shutting down Firecracker VM: %v", err)
+				}
+			case s == syscall.SIGQUIT:
+				log.Printf("Caught signal: %s, forcing shutdown", s.String())
+				if err := m.StopVMM(); err != nil {
+					log.Errorf("An error occurred while stopping Firecracker VMM: %v", err)
+				}
+			}
 		}
 	}()
-	defer func() {
-		if err := m.Shutdown(ctx); err != nil {
-			log.Fatal(err)
-		}
-	}()
-
-	err = m.ResumeVM(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Snapshot loaded")
-	fmt.Printf("IP of VM: %v\n", ipToRestore)
-
-	sshKeyPath := filepath.Join(dir, "root-drive-ssh-key")
-
-	var client *ssh.Client
-	for i := 0; i < maxRetries; i++ {
-		client, err = connectToVM(m, sshKeyPath)
-		if err != nil {
-			time.Sleep(backoffTimeMs * time.Millisecond)
-		} else {
-			break
-		}
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer client.Close()
-
-	session, err := client.NewSession()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer session.Close()
-
-	var b bytes.Buffer
-	session.Stdout = &b
-	err = session.Run(`ps -aux | grep "sleep 422"`)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(b.String())
 }
 
 /*
@@ -613,6 +519,5 @@ func main() {
 	ctx := context.Background()
 
 	ipToRestore := createSnapshotSSH(ctx, instanceID, socketPath, memPath, snapPath)
-	fmt.Println()
-	loadSnapshotSSH(ctx, socketPath, memPath, snapPath, ipToRestore)
+	fmt.Println(ipToRestore)
 }
