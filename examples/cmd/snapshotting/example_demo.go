@@ -286,8 +286,8 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 				// ds=nocloud-net;s=http://169.254.169.254/latest/
 				// network-config=__NETWORK_CONFIG__",
 
-				ds := fmt.Sprintf("nocloud-net;s=http://%s/latest/", MMDS_IP)
-				kernelArgs["ds"] = &ds
+				//ds := fmt.Sprintf("nocloud-net;s=http://%s/latest/", MMDS_IP)
+				//kernelArgs["ds"] = &ds
 
 				/*
 					netcfg, err := BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
@@ -316,9 +316,9 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 				oneliners.FILE("IP:", ipBootParam2)
 				kernelArgs["ip"] = &ipBootParam2
 
-				m.Cfg.KernelArgs = kernelArgs.String()
+				m.Cfg.KernelArgs = `console=ttyS0 noapic reboot=k panic=1 pci=off nomodules rw ` + kernelArgs.String()
 
-				fmt.Println("KERNEL__:", kernelArgs.String())
+				fmt.Println("KERNEL__:", m.Cfg.KernelArgs)
 				fmt.Println("_______________________")
 
 				return nil
