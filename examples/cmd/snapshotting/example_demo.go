@@ -568,7 +568,7 @@ func main() {
 	}
 	defer os.Remove(tempdir)
 
-	instanceID := 6
+	instanceID := 7
 	socketPath := filepath.Join(tempdir, fmt.Sprintf("fc-%d", instanceID))
 
 	err = os.Mkdir("snapshotssh", 0o777)
