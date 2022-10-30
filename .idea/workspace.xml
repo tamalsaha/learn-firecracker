@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d68fcd6e-58c3-4560-b88c-f1cd70d94193" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/cmd/snapshotting/example_demo.go" beforeDir="false" afterPath="$PROJECT_DIR$/examples/cmd/snapshotting/example_demo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/cmd/snapshotting/lib.go" beforeDir="false" afterPath="$PROJECT_DIR$/examples/cmd/snapshotting/lib.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +53,15 @@
       <filePath value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
+    <configuration name="go build main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="learn-firecracker" />
+      <working_directory value="$PROJECT_DIR$/examples/cmd/snapshotting" />
+      <kind value="PACKAGE" />
+      <package value="main" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/examples/cmd/snapshotting/lib.go" />
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
       <module name="learn-firecracker" />
       <working_directory value="$PROJECT_DIR$" />
@@ -63,6 +72,11 @@
       <framework value="gotest" />
       <method v="2" />
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build main" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">

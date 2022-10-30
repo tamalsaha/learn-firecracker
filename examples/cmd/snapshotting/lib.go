@@ -144,14 +144,14 @@ func MacAddr(b []byte) string {
 	return "AA:FC" + string(s)
 }
 
-func main_123() {
+func main() {
 	instanceID := 0
-	VMS_NETWORK_PREFIX := "172.26.0"
 
 	egressIface, err := GetEgressInterface()
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(egressIface)
 
 	// binary.Write(a, binary.LittleEndian, myInt)
 	ip0 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2)
@@ -167,18 +167,18 @@ func main_123() {
 	tap1 := fmt.Sprintf("tap%d", (instanceID+1)*2+1)
 
 	fmt.Println(tap0, tap1)
-	if _, err := CreateTap(tap0, ""); err != nil {
-		panic(err)
-	}
-	if _, err := CreateTap(tap1, fmt.Sprintf("%s/%d", ip0, VMS_NETWORK_SUBNET)); err != nil {
-		panic(err)
-	}
-	if err = SetupIPTables(egressIface, tap1); err != nil {
-		panic(err)
-	}
-
-	_, err = BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
-	if err != nil {
-		panic(err)
-	}
+	//if _, err := CreateTap(tap0, ""); err != nil {
+	//	panic(err)
+	//}
+	//if _, err := CreateTap(tap1, fmt.Sprintf("%s/%d", ip0, VMS_NETWORK_SUBNET)); err != nil {
+	//	panic(err)
+	//}
+	//if err = SetupIPTables(egressIface, tap1); err != nil {
+	//	panic(err)
+	//}
+	//
+	//_, err = BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
+	//if err != nil {
+	//	panic(err)
+	//}
 }
