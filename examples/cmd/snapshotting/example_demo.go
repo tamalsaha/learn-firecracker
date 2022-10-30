@@ -209,15 +209,16 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 	tap1 := fmt.Sprintf("tap%d", (instanceID+1)*2+1)
 
 	fmt.Println(tap0, tap1)
-	if _, err := CreateTap(tap0, ""); err != nil {
-		panic(err)
-	}
-	if _, err := CreateTap(tap1, fmt.Sprintf("%s/%d", ip0, VMS_NETWORK_SUBNET)); err != nil {
-		panic(err)
-	}
-	if err = SetupIPTables(egressIface, tap1); err != nil {
-		panic(err)
-	}
+	// TODO: enable again
+	//if _, err := CreateTap(tap0, ""); err != nil {
+	//	panic(err)
+	//}
+	//if _, err := CreateTap(tap1, fmt.Sprintf("%s/%d", ip0, VMS_NETWORK_SUBNET)); err != nil {
+	//	panic(err)
+	//}
+	//if err = SetupIPTables(egressIface, tap1); err != nil {
+	//	panic(err)
+	//}
 
 	nf0 := sdk.NetworkInterface{
 		StaticConfiguration: &sdk.StaticNetworkConfiguration{
