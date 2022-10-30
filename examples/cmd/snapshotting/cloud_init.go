@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
+	"os"
 	"sort"
 	"strings"
 
@@ -54,7 +55,7 @@ func BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1 string) (string, error) {
 					Macaddress: eth0Mac,
 				},
 				Addresses: []string{
-					"169.254.169.254/16",
+					fmt.Sprintf("%s/%d", MMDS_IP, MMDS_SUBNET),
 				},
 				Gateway4:    "",
 				Nameservers: nil,
@@ -64,7 +65,7 @@ func BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1 string) (string, error) {
 					Macaddress: eth1Mac, // __MAC_OCTET__
 				},
 				Addresses: []string{
-					ip1 + "/24", // __INSTANCE_IP__/24
+					fmt.Sprintf("%s/%d", ip1, VMS_NETWORK_SUBNET), // __INSTANCE_IP__/24
 				},
 				Gateway4: ip0, // __GATEWAY__
 				Nameservers: &Nameservers{
@@ -103,7 +104,7 @@ func BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1 string) (string, error) {
 	return cfg, nil
 }
 
-func BuildData(instanceID string) (*LatestConfig, error) {
+func BuildData(instanceID int, ghUsernames ...string) (*MMDSConfig, error) {
 	/*
 		#cloud-config
 		users:
@@ -115,7 +116,7 @@ func BuildData(instanceID string) (*LatestConfig, error) {
 		    ssh_authorized_keys:
 		      - __SSH_PUB_KEY__
 	*/
-	keys, err := getSSHPubKeys("tamalsaha")
+	keys, err := getSSHPubKeys(ghUsernames...)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +152,7 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 	}
 
 	md := Metadata{
-		InstanceID:    instanceID,
+		InstanceID:    fmt.Sprintf("i-%d", instanceID),
 		LocalHostname: "gh-runner",
 	}
 	mdBytes, err := yaml.Marshal(md)
@@ -159,9 +160,11 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 		return nil, err
 	}
 
-	return &LatestConfig{
-		MetaData: string(mdBytes),
-		UserData: string(udBytes),
+	return &MMDSConfig{
+		Latest: LatestConfig{
+			MetaData: string(mdBytes),
+			UserData: string(udBytes),
+		},
 	}, nil
 
 	// return json.Marshal(lc)
@@ -188,6 +191,10 @@ func getSSHPubKeys(ghUsernames ...string) ([]string, error) {
 		}
 		userKeys := strings.Split(strings.TrimSpace(buf.String()), "\n")
 		keys = append(keys, userKeys...)
+	}
+
+	if data, err := os.ReadFile("/root/go/src/github.com/tamalsaha/learn-firecracker/examples/cmd/snapshotting/root-drive-ssh-pubkey"); err == nil {
+		keys = append(keys, string(data))
 	}
 
 	return keys, nil

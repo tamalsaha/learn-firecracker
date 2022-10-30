@@ -24,10 +24,13 @@ import (
 	"path/filepath"
 	"time"
 
+	current "github.com/containernetworking/cni/pkg/types/100"
 	sdk "github.com/firecracker-microvm/firecracker-go-sdk"
 	"github.com/firecracker-microvm/firecracker-go-sdk/client/models"
+	"github.com/firecracker-microvm/firecracker-go-sdk/cni/vmconf"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/sys/unix"
+	"gomodules.xyz/oneliners"
 )
 
 const (
@@ -39,8 +42,14 @@ const (
 	networkMask string = "/24"
 	subnet      string = "10.168.0.0" + networkMask
 
-	maxRetries    int           = 10
+	maxRetries    int           = 100
 	backoffTimeMs time.Duration = 500
+
+	MMDS_IP     = "169.254.169.254"
+	MMDS_SUBNET = 16
+
+	VMS_NETWORK_PREFIX = "172.26.0"
+	VMS_NETWORK_SUBNET = 31
 )
 
 func writeCNIConfWithHostLocalSubnet(path, networkName, subnet string) error {
@@ -143,27 +152,27 @@ func connectToVM(m *sdk.Machine, sshKeyPath string) (*ssh.Client, error) {
 		return nil, errors.New("No network interfaces")
 	}
 
-	ip := m.Cfg.NetworkInterfaces[0].StaticConfiguration.IPConfiguration.IPAddr.IP // IP of VM
+	ip := m.Cfg.NetworkInterfaces[len(m.Cfg.NetworkInterfaces)-1].StaticConfiguration.IPConfiguration.IPAddr.IP // IP of VM
 
 	return ssh.Dial("tcp", fmt.Sprintf("%s:22", ip), config)
 }
 
-func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string) string {
+func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath, snapPath string) string {
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	cniConfDir := filepath.Join(dir, "cni.conf")
+	// cniConfDir := filepath.Join(dir, "cni.conf")
 	// cniBinPath := []string{filepath.Join(dir, "bin")} // CNI binaries
 
-	// Network config
-	cniConfPath := fmt.Sprintf("%s/%s.conflist", cniConfDir, networkName)
-	err = writeCNIConfWithHostLocalSubnet(cniConfPath, networkName, subnet)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.Remove(cniConfPath)
+	//// Network config
+	//cniConfPath := fmt.Sprintf("%s/%s.conflist", cniConfDir, networkName)
+	//err = writeCNIConfWithHostLocalSubnet(cniConfPath, networkName, subnet)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//defer os.Remove(cniConfPath)
 
 	//networkInterface := sdk.NetworkInterface{
 	//	StaticConfiguration: &sdk.StaticNetworkConfiguration{
@@ -180,13 +189,11 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 	//	},
 	//}
 
-	instanceID := 0
-	VMS_NETWORK_PREFIX := "172.26.0"
-
 	egressIface, err := GetEgressInterface()
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("EgressInterface:", egressIface)
 
 	// binary.Write(a, binary.LittleEndian, myInt)
 	ip0 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2)
@@ -205,15 +212,10 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 	if _, err := CreateTap(tap0, ""); err != nil {
 		panic(err)
 	}
-	if _, err := CreateTap(tap1, ip0+"/24"); err != nil {
+	if _, err := CreateTap(tap1, fmt.Sprintf("%s/%d", ip0, VMS_NETWORK_SUBNET)); err != nil {
 		panic(err)
 	}
 	if err = SetupIPTables(egressIface, tap1); err != nil {
-		panic(err)
-	}
-
-	_, err = BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
-	if err != nil {
 		panic(err)
 	}
 
@@ -222,19 +224,20 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 			MacAddress:  eth0Mac,
 			HostDevName: tap0,
 			IPConfiguration: &sdk.IPConfiguration{
-				IPAddr:      net.IPNet{IP: net.ParseIP("169.254.169.254"), Mask: net.CIDRMask(16, 16)},
+				IPAddr:      net.IPNet{IP: net.ParseIP(MMDS_IP), Mask: net.CIDRMask(MMDS_SUBNET, 8*net.IPv4len)},
 				Gateway:     nil,
 				Nameservers: nil,
 				IfName:      "eth0",
 			},
 		},
+		AllowMMDS: true,
 	}
 	nf1 := sdk.NetworkInterface{
 		StaticConfiguration: &sdk.StaticNetworkConfiguration{
 			MacAddress:  eth1Mac,
 			HostDevName: tap1,
 			IPConfiguration: &sdk.IPConfiguration{
-				IPAddr:      net.IPNet{IP: net.ParseIP(ip1), Mask: net.CIDRMask(24, 8)},
+				IPAddr:      net.IPNet{IP: net.ParseIP(ip1), Mask: net.CIDRMask(VMS_NETWORK_SUBNET, 8*net.IPv4len)},
 				Gateway:     net.ParseIP(ip0),
 				Nameservers: []string{"1.1.1.1", "8.8.8.8"},
 				IfName:      "eth1",
@@ -245,7 +248,6 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 	socketFile := fmt.Sprintf("%s.create", socketPath)
 
 	cfg := createNewConfig(socketFile, withNetworkInterface(nf0), withNetworkInterface(nf1))
-	// cfg.KernelArgs
 
 	// Use firecracker binary when making machine
 	cmd := sdk.VMCommandBuilder{}.WithSocketPath(socketFile).WithBin(filepath.Join(dir, "firecracker")).Build(ctx)
@@ -257,7 +259,7 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 	defer os.Remove(socketFile)
 
 	{
-		m.Handlers.FcInit.Swap(sdk.Handler{
+		m.Handlers.FcInit = m.Handlers.FcInit.Swap(sdk.Handler{
 			Name: sdk.SetupKernelArgsHandlerName,
 			Fn: func(ctx context.Context, m *sdk.Machine) error {
 				kernelArgs := parseKernelArgs(m.Cfg.KernelArgs)
@@ -272,31 +274,46 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 				// ds=nocloud-net;s=http://169.254.169.254/latest/
 				// network-config=__NETWORK_CONFIG__",
 
-				ds := "nocloud-net;s=http://169.254.169.254/latest/"
+				ds := fmt.Sprintf("nocloud-net;s=http://%s/latest/", MMDS_IP)
 				kernelArgs["ds"] = &ds
 
-				netcfg, err := BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
-				if err != nil {
-					return err
+				/*
+					netcfg, err := BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
+					if err != nil {
+						return err
+					}
+					kernelArgs["network-config"] = &netcfg
+				*/
+
+				ipBootParam := func(conf *sdk.IPConfiguration) string {
+					// the vmconf package already has a function for doing this, just re-use it
+					vmConf := vmconf.StaticNetworkConf{
+						VMNameservers: conf.Nameservers,
+						VMIPConfig: &current.IPConfig{
+							Address: conf.IPAddr,
+							Gateway: conf.Gateway,
+						},
+						VMIfName: conf.IfName,
+					}
+					return vmConf.IPBootParam()
 				}
-				kernelArgs["network-config"] = &netcfg
+				ipBootParam2 := ipBootParam(m.Cfg.NetworkInterfaces[len(m.Cfg.NetworkInterfaces)-1].StaticConfiguration.IPConfiguration)
+				oneliners.FILE("IP:", ipBootParam2)
+				kernelArgs["ip"] = &ipBootParam2
 
 				m.Cfg.KernelArgs = kernelArgs.String()
 
 				return nil
 			},
 		})
-	}
 
-	{
-		mmds, err := BuildData(fmt.Sprintf("%d", instanceID))
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = m.SetMetadata(ctx, mmds)
-		if err != nil {
-			log.Fatal(err)
-		}
+		// disable network validation
+		m.Handlers.Validation = m.Handlers.Validation.Swap(sdk.Handler{
+			Name: sdk.ValidateNetworkCfgHandlerName,
+			Fn: func(ctx context.Context, m *sdk.Machine) error {
+				return nil
+			},
+		})
 	}
 
 	err = m.Start(ctx)
@@ -314,9 +331,22 @@ func createSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath string
 		}
 	}()
 
-	hostDevName := m.Cfg.NetworkInterfaces[0].StaticConfiguration.HostDevName
+	/*
+		{
+			mmds, err := BuildData(instanceID, "tamalsaha")
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = m.SetMetadata(ctx, mmds)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	*/
+
+	hostDevName := m.Cfg.NetworkInterfaces[len(m.Cfg.NetworkInterfaces)-1].StaticConfiguration.HostDevName
 	fmt.Printf("hostDevName: %v\n", hostDevName)
-	vmIP := m.Cfg.NetworkInterfaces[0].StaticConfiguration.IPConfiguration.IPAddr.IP.String()
+	vmIP := m.Cfg.NetworkInterfaces[len(m.Cfg.NetworkInterfaces)-1].StaticConfiguration.IPConfiguration.IPAddr.IP.String()
 	fmt.Printf("IP of VM: %v\n", vmIP)
 
 	sshKeyPath := filepath.Join(dir, "root-drive-ssh-key")
@@ -505,7 +535,9 @@ func loadSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath, ipToRes
 	fmt.Println(b.String())
 }
 
-func main__() {
+func main() {
+	oneliners.FILE()
+
 	// Check for kvm and root access
 	err := unix.Access("/dev/kvm", unix.W_OK)
 	if err != nil {
@@ -520,13 +552,14 @@ func main__() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	oneliners.FILE()
 
-	cniConfDir := filepath.Join(dir, "cni.conf")
-	err = os.Mkdir(cniConfDir, 0o777)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.Remove(cniConfDir)
+	//cniConfDir := filepath.Join(dir, "cni.conf")
+	//err = os.Mkdir(cniConfDir, 0o777)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//defer os.Remove(cniConfDir)
 
 	// Setup socket and snapshot + memory paths
 	tempdir, err := os.MkdirTemp("", "FCGoSDKSnapshotExample")
@@ -534,19 +567,22 @@ func main__() {
 		log.Fatal(err)
 	}
 	defer os.Remove(tempdir)
-	socketPath := filepath.Join(tempdir, "snapshotssh")
+
+	instanceID := 6
+	socketPath := filepath.Join(tempdir, fmt.Sprintf("fc-%d", instanceID))
 
 	err = os.Mkdir("snapshotssh", 0o777)
 	if err != nil && !errors.Is(err, os.ErrExist) {
 		log.Fatal(err)
 	}
+	oneliners.FILE()
 
 	snapPath := filepath.Join(dir, "snapshotssh/SnapFile")
 	memPath := filepath.Join(dir, "snapshotssh/MemFile")
 
 	ctx := context.Background()
 
-	ipToRestore := createSnapshotSSH(ctx, socketPath, memPath, snapPath)
+	ipToRestore := createSnapshotSSH(ctx, instanceID, socketPath, memPath, snapPath)
 	fmt.Println()
 	loadSnapshotSSH(ctx, socketPath, memPath, snapPath, ipToRestore)
 }

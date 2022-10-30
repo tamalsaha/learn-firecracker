@@ -33,7 +33,8 @@ else
     endef
 endif
 
-all: plugins image vmlinux firecracker
+# all: plugins image vmlinux firecracker
+all: image vmlinux firecracker
 
 plugins: bin/tc-redirect-tap bin/ptp bin/firewall bin/host-local | bin
 
@@ -75,6 +76,7 @@ root-drive-with-ssh.img root-drive-ssh-key:
 	temp/tools/devtool build_rootfs -s 20000M
 	cp temp/build/rootfs/bionic.rootfs.ext4 root-drive-with-ssh.img
 	cp temp/build/rootfs/ssh/id_rsa root-drive-ssh-key
+	cp temp/build/rootfs/ssh/id_rsa.pub root-drive-ssh-pubkey
 	rm -rf temp
 
 run: all

@@ -6,10 +6,9 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/vishvananda/netlink"
-
 	"github.com/coreos/go-iptables/iptables"
 	"github.com/pkg/errors"
+	"github.com/vishvananda/netlink"
 	"gomodules.xyz/go-sh"
 )
 
@@ -141,10 +140,10 @@ func MacAddr(b []byte) string {
 	for i, tn := range b {
 		s[i*3], s[i*3+1], s[i*3+2] = ':', hexDigit[tn>>4], hexDigit[tn&0xf]
 	}
-	return "AA:FF" + string(s)
+	return "AA:FC" + string(s)
 }
 
-func main() {
+func main_123() {
 	instanceID := 0
 	VMS_NETWORK_PREFIX := "172.26.0"
 
@@ -170,7 +169,7 @@ func main() {
 	if _, err := CreateTap(tap0, ""); err != nil {
 		panic(err)
 	}
-	if _, err := CreateTap(tap1, ip0+"/24"); err != nil {
+	if _, err := CreateTap(tap1, fmt.Sprintf("%s/%d", ip0, VMS_NETWORK_SUBNET)); err != nil {
 		panic(err)
 	}
 	if err = SetupIPTables(egressIface, tap1); err != nil {

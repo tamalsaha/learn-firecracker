@@ -10,6 +10,7 @@ require (
 	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b
 	golang.org/x/sys v0.0.0-20221006211917-84dc82d7e875
 	gomodules.xyz/go-sh v0.1.0
+	gomodules.xyz/oneliners v0.0.0-20200730052119-bccc7758058b
 	sigs.k8s.io/yaml v1.2.0
 )
 
