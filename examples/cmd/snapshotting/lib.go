@@ -144,7 +144,7 @@ func MacAddr(b []byte) string {
 	return "AA:FC" + string(s)
 }
 
-func main() {
+func main__() {
 	instanceID := 0
 
 	egressIface, err := GetEgressInterface()

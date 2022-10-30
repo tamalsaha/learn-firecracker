@@ -536,7 +536,20 @@ func loadSnapshotSSH(ctx context.Context, socketPath, memPath, snapPath, ipToRes
 	fmt.Println(b.String())
 }
 
-func main__() {
+/*
+sudo ip tuntap add tap2 mode tap
+sudo ip link set tap2 up
+
+sudo ip tuntap add tap3 mode tap
+sudo ip addr add 172.26.0.2/31 dev tap3
+sudo ip link set tap3 up
+
+sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+sudo iptables -t nat -A POSTROUTING -o bond0 -j MASQUERADE
+sudo iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i tap3 -o bond0 -j ACCEPT
+*/
+func main() {
 	oneliners.FILE()
 
 	// Check for kvm and root access
