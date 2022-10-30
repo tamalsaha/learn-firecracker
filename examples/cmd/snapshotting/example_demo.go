@@ -300,7 +300,7 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 				ipBootParam := func(conf *sdk.IPConfiguration) string {
 					// the vmconf package already has a function for doing this, just re-use it
 					vmConf := vmconf.StaticNetworkConf{
-						VMNameservers: conf.Nameservers,
+						// VMNameservers: conf.Nameservers,
 						VMIPConfig: &current.IPConfig{
 							Address: conf.IPAddr,
 							Gateway: conf.Gateway,
