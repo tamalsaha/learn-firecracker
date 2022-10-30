@@ -318,6 +318,9 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 
 				m.Cfg.KernelArgs = kernelArgs.String()
 
+				fmt.Println("KERNEL__:", kernelArgs.String())
+				fmt.Println("_______________________")
+
 				return nil
 			},
 		})
