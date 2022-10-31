@@ -3,7 +3,7 @@
 curl -s --unix-socket /tmp/FCGoSDKSnapshotExample1998987509/fc-0.create http://localhost/mmds
 
 # stop
-curl --unix-socket /tmp/FCGoSDKSnapshotExample1998987509/fc-0.create -i \
+curl --unix-socket /tmp/FCGoSDKSnapshotExample3006451316/fc-0.create -i \
   -X PUT 'http://localhost/actions'       \
   -H  'Accept: application/json'          \
   -H  'Content-Type: application/json'    \
