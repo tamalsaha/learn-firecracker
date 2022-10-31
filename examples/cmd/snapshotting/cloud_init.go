@@ -160,10 +160,11 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(string(mdBytes))
 
 	return &MMDSConfig{
 		Latest: LatestConfig{
-			MetaData: string(mdBytes),
+			MetaData: md,
 			// UserData: string(udBytes),
 		},
 	}, nil

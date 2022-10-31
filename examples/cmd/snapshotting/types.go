@@ -49,6 +49,6 @@ type MMDSConfig struct {
 }
 
 type LatestConfig struct {
-	MetaData string `json:"meta-data,omitempty"`
+	MetaData interface{} `json:"meta-data,omitempty"`
 	// UserData string `json:"user-data,omitempty"`
 }
