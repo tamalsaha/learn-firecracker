@@ -1,0 +1,428 @@
+# firectl   --kernel=./vmlinux   --root-drive=./root-drive-with-ssh.img   --kernel-opts="console=ttyS0 noapic reboot=k panic=1 pci=off nomodules rw"   --tap-device=tap2/AA:FC:ac:1a:00:02   --tap-device=tap3/AA:FC:ac:1a:00:03
+INFO[0000] Called startVMM(), setting up a VMM on /root/.firecracker.sock-3811-81
+DEBU[0000] GET /machine-config HTTP/1.1
+Host: localhost
+User-Agent: Go-http-client/1.1
+Accept: application/json
+Accept-Encoding: gzip
+
+
+DEBU[0000] HTTP/1.1 200
+Content-Length: 73
+Connection: keep-alive
+Content-Type: application/json
+Server: Firecracker API
+
+{"vcpu_count":1,"mem_size_mib":128,"smt":false,"track_dirty_pages":false}
+INFO[0000] VMM logging disabled.
+INFO[0000] VMM metrics disabled.
+DEBU[0000] PUT /machine-config HTTP/1.1
+Host: localhost
+User-Agent: Go-http-client/1.1
+Content-Length: 47
+Accept: application/json
+Content-Type: application/json
+Accept-Encoding: gzip
+
+{"mem_size_mib":512,"smt":true,"vcpu_count":1}
+
+DEBU[0000] HTTP/1.1 204
+Content-Length: 0
+Connection: keep-alive
+Server: Firecracker API
+
+
+DEBU[0000] GET /machine-config HTTP/1.1
+Host: localhost
+User-Agent: Go-http-client/1.1
+Accept: application/json
+Accept-Encoding: gzip
+
+
+DEBU[0000] HTTP/1.1 200
+Content-Length: 72
+Connection: keep-alive
+Content-Type: application/json
+Server: Firecracker API
+
+{"vcpu_count":1,"mem_size_mib":512,"smt":true,"track_dirty_pages":false}
+INFO[0000] refreshMachineConfiguration: [GET /machine-config][200] getMachineConfigurationOK  &{CPUTemplate: MemSizeMib:0xc00039c080 Smt:0xc00039c08b TrackDirtyPages:false VcpuCount:0xc00039c078}
+DEBU[0000] PUT /boot-source HTTP/1.1
+Host: localhost
+User-Agent: Go-http-client/1.1
+Content-Length: 107
+Accept: application/json
+Content-Type: application/json
+Accept-Encoding: gzip
+
+{"boot_args":"noapic reboot=k panic=1 pci=off nomodules rw console=ttyS0","kernel_image_path":"./vmlinux"}
+
+DEBU[0000] HTTP/1.1 204
+Content-Length: 0
+Connection: keep-alive
+Server: Firecracker API
+
+
+INFO[0000] PutGuestBootSource: [PUT /boot-source][204] putGuestBootSourceNoContent
+INFO[0000] Attaching drive ./root-drive-with-ssh.img, slot 1, root true.
+DEBU[0000] PUT /drives/1 HTTP/1.1
+Host: localhost
+User-Agent: Go-http-client/1.1
+Content-Length: 103
+Accept: application/json
+Content-Type: application/json
+Accept-Encoding: gzip
+
+{"drive_id":"1","is_read_only":false,"is_root_device":true,"path_on_host":"./root-drive-with-ssh.img"}
+
+DEBU[0000] HTTP/1.1 204
+Content-Length: 0
+Connection: keep-alive
+Server: Firecracker API
+
+
+INFO[0000] Attached drive ./root-drive-with-ssh.img: [PUT /drives/{drive_id}][204] putGuestDriveByIdNoContent
+INFO[0000] Attaching NIC tap2 (hwaddr AA:FC:ac:1a:00:02) at index 1
+DEBU[0000] PUT /network-interfaces/1 HTTP/1.1
+Host: localhost
+User-Agent: Go-http-client/1.1
+Content-Length: 72
+Accept: application/json
+Content-Type: application/json
+Accept-Encoding: gzip
+
+{"guest_mac":"AA:FC:ac:1a:00:02","host_dev_name":"tap2","iface_id":"1"}
+
+DEBU[0000] HTTP/1.1 204
+Content-Length: 0
+Connection: keep-alive
+Server: Firecracker API
+
+
+INFO[0000] Attaching NIC tap3 (hwaddr AA:FC:ac:1a:00:03) at index 2
+DEBU[0000] PUT /network-interfaces/2 HTTP/1.1
+Host: localhost
+User-Agent: Go-http-client/1.1
+Content-Length: 72
+Accept: application/json
+Content-Type: application/json
+Accept-Encoding: gzip
+
+{"guest_mac":"AA:FC:ac:1a:00:03","host_dev_name":"tap3","iface_id":"2"}
+
+DEBU[0000] HTTP/1.1 204
+Content-Length: 0
+Connection: keep-alive
+Server: Firecracker API
+
+
+INFO[0000] No interfaces are allowed to access MMDS, skipping MMDS config
+DEBU[0000] PUT /actions HTTP/1.1
+Host: localhost
+User-Agent: Go-http-client/1.1
+Content-Length: 32
+Accept: application/json
+Content-Type: application/json
+Accept-Encoding: gzip
+
+{"action_type":"InstanceStart"}
+
+DEBU[0000] HTTP/1.1 204
+Content-Length: 0
+Connection: keep-alive
+Server: Firecracker API
+
+
+INFO[0000] startInstance successful: [PUT /actions][204] createSyncActionNoContent
+[    0.000000] Linux version 4.14.174 (@57edebb99db7) (gcc version 7.5.0 (Ubuntu 7.5.0-3ubuntu1~18.04)) #2 SMP Wed Jul 14 11:47:24 UTC 2021
+[    0.000000] Command line: noapic reboot=k panic=1 pci=off nomodules rw console=ttyS0 root=/dev/vda rw virtio_mmio.device=4K@0xd0000000:5 virtio_mmio.device=4K@0xd0001000:6 virtio_mmio.device=4K@0xd0002000:7
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x008: 'MPX bounds registers'
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x010: 'MPX CSR'
+[    0.000000] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.000000] x86/fpu: xstate_offset[3]:  832, xstate_sizes[3]:   64
+[    0.000000] x86/fpu: xstate_offset[4]:  896, xstate_sizes[4]:   64
+[    0.000000] x86/fpu: Enabled xstate features 0x1f, context size is 960 bytes, using 'compacted' format.
+[    0.000000] e820: BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000001fffffff] usable
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] DMI not present or invalid.
+[    0.000000] Hypervisor detected: KVM
+[    0.000000] tsc: Fast TSC calibration using PIT
+[    0.000000] e820: last_pfn = 0x20000 max_arch_pfn = 0x400000000
+[    0.000000] MTRR: Disabled
+[    0.000000] x86/PAT: MTRRs disabled, skipping PAT initialization too.
+[    0.000000] CPU MTRRs all blank - virtualized system.
+[    0.000000] x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC
+[    0.000000] found SMP MP-table at [mem 0x0009fc00-0x0009fc0f]
+[    0.000000] Scanning 1 areas for low memory corruption
+[    0.000000] Using GB pages for direct mapping
+[    0.000000] No NUMA configuration found
+[    0.000000] Faking a node at [mem 0x0000000000000000-0x000000001fffffff]
+[    0.000000] NODE_DATA(0) allocated [mem 0x1ffde000-0x1fffffff]
+[    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
+[    0.000000] kvm-clock: cpu 0, msr 0:1ffdc001, primary cpu clock
+[    0.000000] kvm-clock: using sched offset of 14657338 cycles
+[    0.000000] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+[    0.000000]   DMA32    [mem 0x0000000001000000-0x000000001fffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.000000]   node   0: [mem 0x0000000000100000-0x000000001fffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000000001000-0x000000001fffffff]
+[    0.000000] Intel MultiProcessor Specification v1.4
+[    0.000000] MPTABLE: OEM ID: FC
+[    0.000000] MPTABLE: Product ID: 000000000000
+[    0.000000] MPTABLE: APIC at: 0xFEE00000
+[    0.000000] Processor #0 (Bootup-CPU)
+[    0.000000] IOAPIC[0]: apic_id 2, version 17, address 0xfec00000, GSI 0-23
+[    0.000000] Processors: 1
+[    0.000000] smpboot: Allowing 1 CPUs, 0 hotplug CPUs
+[    0.000000] PM: Registered nosave memory: [mem 0x00000000-0x00000fff]
+[    0.000000] PM: Registered nosave memory: [mem 0x0009f000-0x000fffff]
+[    0.000000] e820: [mem 0x20000000-0xffffffff] available for PCI devices
+[    0.000000] Booting paravirtualized kernel on KVM
+[    0.000000] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645519600211568 ns
+[    0.000000] random: get_random_bytes called from start_kernel+0x94/0x486 with crng_init=0
+[    0.000000] setup_percpu: NR_CPUS:128 nr_cpumask_bits:128 nr_cpu_ids:1 nr_node_ids:1
+[    0.000000] percpu: Embedded 41 pages/cpu s128600 r8192 d31144 u2097152
+[    0.000000] KVM setup async PF for cpu 0
+[    0.000000] kvm-stealtime: cpu 0, msr 1fc15040
+[    0.000000] PV qspinlock hash table entries: 256 (order: 0, 4096 bytes)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 128905
+[    0.000000] Policy zone: DMA32
+[    0.000000] Kernel command line: noapic reboot=k panic=1 pci=off nomodules rw console=ttyS0 root=/dev/vda rw virtio_mmio.device=4K@0xd0000000:5 virtio_mmio.device=4K@0xd0001000:6 virtio_mmio.device=4K@0xd0002000:7
+[    0.000000] PID hash table entries: 2048 (order: 2, 16384 bytes)
+[    0.000000] Memory: 498072K/523896K available (8204K kernel code, 645K rwdata, 1480K rodata, 1324K init, 2792K bss, 25824K reserved, 0K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.004000] Hierarchical RCU implementation.
+[    0.004000] 	RCU restricting CPUs from NR_CPUS=128 to nr_cpu_ids=1.
+[    0.004000] RCU: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+[    0.004000] NR_IRQS: 4352, nr_irqs: 48, preallocated irqs: 16
+[    0.004000] Console: colour dummy device 80x25
+[    0.004000] console [ttyS0] enabled
+[    0.004000] tsc: Detected 3407.998 MHz processor
+[    0.004000] Calibrating delay loop (skipped) preset value.. 6815.99 BogoMIPS (lpj=13631992)
+[    0.004000] pid_max: default: 32768 minimum: 301
+[    0.004000] Security Framework initialized
+[    0.004000] SELinux:  Initializing.
+[    0.004000] Dentry cache hash table entries: 65536 (order: 7, 524288 bytes)
+[    0.004000] Inode-cache hash table entries: 32768 (order: 6, 262144 bytes)
+[    0.004000] Mount-cache hash table entries: 1024 (order: 1, 8192 bytes)
+[    0.004000] Mountpoint-cache hash table entries: 1024 (order: 1, 8192 bytes)
+[    0.004114] Last level iTLB entries: 4KB 64, 2MB 8, 4MB 8
+[    0.004410] Last level dTLB entries: 4KB 64, 2MB 0, 4MB 0, 1GB 4
+[    0.004729] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+[    0.005161] Spectre V2 : Mitigation: Enhanced IBRS
+[    0.005407] Spectre V2 : Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch
+[    0.005863] Spectre V2 : mitigation: Enabling conditional Indirect Branch Prediction Barrier
+[    0.006343] Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via prctl and seccomp
+[    0.006831] TAA: Mitigation: TSX disabled
+[    0.015255] Freeing SMP alternatives memory: 28K
+[    0.016288] smpboot: Max logical packages: 1
+[    0.016520] Not enabling interrupt remapping due to skipped IO-APIC setup
+[    0.016963] smpboot: CPU0: Intel(R) Xeon(R) Processor @ 3.40GHz (family: 0x6, model: 0x9e, stepping: 0xd)
+[    0.017532] Performance Events: unsupported p6 CPU model 158 no PMU driver, software events only.
+[    0.018039] Hierarchical SRCU implementation.
+[    0.018715] smp: Bringing up secondary CPUs ...
+[    0.018951] smp: Brought up 1 node, 1 CPU
+[    0.019160] smpboot: Total of 1 processors activated (6815.99 BogoMIPS)
+[    0.020000] devtmpfs: initialized
+[    0.020000] x86/mm: Memory block size: 128MB
+[    0.020000] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.020004] futex hash table entries: 256 (order: 2, 16384 bytes)
+[    0.020484] NET: Registered protocol family 16
+[    0.020811] cpuidle: using governor ladder
+[    0.021030] cpuidle: using governor menu
+[    0.024317] HugeTLB registered 1.00 GiB page size, pre-allocated 0 pages
+[    0.024663] HugeTLB registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.025133] SCSI subsystem initialized
+[    0.025363] pps_core: LinuxPPS API ver. 1 registered
+[    0.025635] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.026100] PTP clock support registered
+[    0.026306] dmi: Firmware registration failed.
+[    0.026583] NetLabel: Initializing
+[    0.026764] NetLabel:  domain hash size = 128
+[    0.026988] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.027291] NetLabel:  unlabeled traffic allowed by default
+[    0.027648] clocksource: Switched to clocksource kvm-clock
+[    0.027945] VFS: Disk quotas dquot_6.6.0
+[    0.027945] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    0.027945] NET: Registered protocol family 2
+[    0.027945] TCP established hash table entries: 4096 (order: 3, 32768 bytes)
+[    0.027945] TCP bind hash table entries: 4096 (order: 4, 65536 bytes)
+[    0.027945] TCP: Hash tables configured (established 4096 bind 4096)
+[    0.027945] UDP hash table entries: 256 (order: 1, 8192 bytes)
+[    0.027945] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes)
+[    0.028048] NET: Registered protocol family 1
+[    0.028369] virtio-mmio: Registering device virtio-mmio.0 at 0xd0000000-0xd0000fff, IRQ 5.
+[    0.028801] virtio-mmio: Registering device virtio-mmio.1 at 0xd0001000-0xd0001fff, IRQ 6.
+[    0.029231] virtio-mmio: Registering device virtio-mmio.2 at 0xd0002000-0xd0002fff, IRQ 7.
+[    0.029663] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x311fd208cfc, max_idle_ns: 440795283699 ns
+[    0.030218] platform rtc_cmos: registered platform RTC device (no PNP device found)
+[    0.031121] Scanning for low memory corruption every 60 seconds
+[    0.031525] audit: initializing netlink subsys (disabled)
+[    0.031960] Initialise system trusted keyrings
+[    0.032211] Key type blacklist registered
+[    0.032485] audit: type=2000 audit(1667181653.088:1): state=initialized audit_enabled=0 res=1
+[    0.032946] workingset: timestamp_bits=36 max_order=17 bucket_order=0
+[    0.034314] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.035291] Key type asymmetric registered
+[    0.035501] Asymmetric key parser 'x509' registered
+[    0.035759] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 252)
+[    0.036217] io scheduler noop registered (default)
+[    0.036476] io scheduler cfq registered
+[    0.036712] virtio-mmio virtio-mmio.0: Failed to enable 64-bit or 32-bit DMA.  Trying to continue, but this might not work.
+[    0.037308] virtio-mmio virtio-mmio.1: Failed to enable 64-bit or 32-bit DMA.  Trying to continue, but this might not work.
+[    0.037904] virtio-mmio virtio-mmio.2: Failed to enable 64-bit or 32-bit DMA.  Trying to continue, but this might not work.
+[    0.038531] Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+[    0.059427] serial8250: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a U6_16550A
+[    0.060705] loop: module loaded
+[    0.061320] Loading iSCSI transport class v2.0-870.
+[    0.061661] iscsi: registered transport (tcp)
+[    0.061936] tun: Universal TUN/TAP device driver, 1.6
+2022-10-31T02:00:53.155000850 [anonymous-instance:fc_vcpu 0:WARN:src/devices/src/legacy/i8042.rs:126] Failed to trigger i8042 kbd interrupt (disabled by guest OS)
+[    0.068287] i8042: Failed to disable AUX port, but continuing anyway... Is this a SiS?
+[    0.068673] i8042: If AUX port is really absent please use the 'i8042.noaux' option
+2022-10-31T02:00:53.161511722 [anonymous-instance:fc_vcpu 0:WARN:src/devices/src/legacy/i8042.rs:126] Failed to trigger i8042 kbd interrupt (disabled by guest OS)
+[    0.352757] serio: i8042 KBD port at 0x60,0x64 irq 1
+[    0.354998] hidraw: raw HID events driver (C) Jiri Kosina
+[    0.356981] nf_conntrack version 0.5.0 (4096 buckets, 16384 max)
+[    0.359070] ip_tables: (C) 2000-2006 Netfilter Core Team
+[    0.359488] Initializing XFRM netlink socket
+[    0.359804] NET: Registered protocol family 10
+[    0.360405] Segment Routing with IPv6
+[    0.360618] NET: Registered protocol family 17
+[    0.360863] Bridge firewalling registered
+[    0.361150] NET: Registered protocol family 40
+[    0.361483] sched_clock: Marking stable (360088887, 0)->(398481966, -38393079)
+[    0.362056] registered taskstats version 1
+[    0.362271] Loading compiled-in X.509 certificates
+[    0.363064] Loaded X.509 cert 'Build time autogenerated kernel key: e98e9d271da5d0a322cc4d7bfaa8c2c4c3e46010'
+[    0.363775] Key type encrypted registered
+[    0.865312] input: AT Raw Set 2 keyboard as /devices/platform/i8042/serio0/input/input0
+[    0.869141] EXT4-fs (vda): mounted filesystem with ordered data mode. Opts: (null)
+[    0.869573] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[    0.869976] devtmpfs: mounted
+[    0.870823] Freeing unused kernel memory: 1324K
+[    0.880066] Write protecting the kernel read-only data: 12288k
+[    0.881319] Freeing unused kernel memory: 2016K
+[    0.882513] Freeing unused kernel memory: 568K
+2022-10-31T02:00:53.977534002 [anonymous-instance:fc_vcpu 0:WARN:src/devices/src/virtio/mmio.rs:319] invalid virtio mmio write: 0x0:0x1
+SELinux:  Could not open policy file <= /etc/selinux/targeted/policy/policy.31:  No such file or directory
+[    0.894610] systemd[1]: Failed to insert module 'autofs4': No such file or directory
+[    0.896228] systemd[1]: systemd 237 running in system mode. (+PAM +AUDIT +SELINUX +IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS +ACL +XZ +LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD -IDN2 +IDN -PCRE2 default-hierarchy=hybrid)
+[    0.897361] systemd[1]: Detected virtualization kvm.
+[    0.897686] systemd[1]: Detected architecture x86-64.
+
+Welcome to Ubuntu 18.04.6 LTS!
+
+[    0.899392] systemd[1]: Set hostname to <ubuntu-fc-uvm>.
+[    0.899745] random: fast init done
+[    0.940351] systemd[1]: /etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf:3: Ignoring unknown escape sequences: "-p -- \u"
+[    0.942730] random: systemd: uninitialized urandom read (16 bytes read)
+[    0.943243] systemd[1]: Created slice System Slice.
+[  OK  ] Created slice System Slice.
+[    0.944146] random: systemd: uninitialized urandom read (16 bytes read)
+[    0.944664] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
+[  OK  ] Started Forward Password Requests to Wall Directory Watch.
+[    0.945898] random: systemd: uninitialized urandom read (16 bytes read)
+[    0.946418] systemd[1]: Listening on /dev/initctl Compatibility Named Pipe.
+[  OK  ] Listening on /dev/initctl Compatibility Named Pipe.
+[    0.947248] systemd[1]: Starting of Arbitrary Executable File Formats File System Automount Point not supported.
+[UNSUPP] Starting of Arbitrary Executable Fi…tem Automount Point not supported.
+[    0.948387] systemd[1]: Reached target Swap.
+[  OK  ] Reached target Swap.
+[  OK  ] Started Dispatch Password Requests to Console Directory Watch.
+[  OK  ] Created slice system-serial\x2dgetty.slice.
+[  OK  ] Listening on udev Control Socket.
+[  OK  ] Listening on Journal Audit Socket.
+[  OK  ] Created slice system-getty.slice.
+[  OK  ] Reached target Remote File Systems.
+[  OK  ] Reached target Local Encrypted Volumes.
+[  OK  ] Reached target Slices.
+[  OK  ] Listening on Journal Socket.
+         Mounting Huge Pages File System...
+         Starting Load Kernel Modules...
+         Starting Create Static Device Nodes in /dev...
+         Mounting Kernel Debug File System...
+         Starting Remount Root and Kernel File Systems...
+[  OK  ] Reached target Paths.
+         Mounting POSIX Message Queue File System...
+[  OK  ] Listening on Journal Socket (/dev/log).
+         Starting Journal Service...
+[  OK  ] Listening on udev Kernel Socket.
+[  OK  ] Reached target Sockets.
+         Starting udev Coldplug all Devices...
+[  OK  ] Mounted Huge Pages File System.
+[  OK  ] Started Load Kernel Modules.
+[  OK  ] Started Journal Service.
+[  OK  ] Started Create Static Device Nodes in /dev.
+[  OK  ] Mounted Kernel Debug File System.
+[  OK  ] Started Remount Root and Kernel File Systems.
+[  OK  ] Mounted POSIX Message Queue File System.
+         Starting Load/Save Random Seed...
+         Starting udev Kernel Device Manager...
+[  OK  ] Reached target Local File Systems (Pre).
+[  OK  ] Reached target Local File Systems.
+         Starting Flush Journal to Persistent Storage...
+         Starting Apply Kernel Variables...
+[  OK  ] Started Load/Save Random Seed.
+[  OK  ] Started Apply Kernel Variables.
+[  OK  ] Started udev Kernel Device Manager.
+[  OK  ] Started udev Coldplug all Devices.
+[  OK  ] Started Flush Journal to Persistent Storage.
+         Starting Create Volatile Files and Directories...
+[  OK  ] Started Create Volatile Files and Directories.
+         Starting Update UTMP about System Boot/Shutdown...
+[  OK  ] Started Update UTMP about System Boot/Shutdown.
+[  OK  ] Reached target System Initialization.
+[  OK  ] Started Message of the Day.
+[  OK  ] Reached target Basic System.
+         Starting OpenBSD Secure Shell server...
+         Starting getty on tty2-tty6 if dbus and logind are not available...
+[  OK  ] Started Daily Cleanup of Temporary Directories.
+         Starting Permit User Sessions...
+[  OK  ] Started Discard unused blocks once a week.
+[  OK  ] Started Daily apt download activities.
+[  OK  ] Started Daily apt upgrade and clean activities.
+[  OK  ] Reached target Timers.
+[  OK  ] Started Permit User Sessions.
+[  OK  ] Found device /dev/ttyS0.
+[  OK  ] Started OpenBSD Secure Shell server.
+[  OK  ] Started getty on tty2-tty6 if dbus and logind are not available.
+[  OK  ] Started Getty on tty6.
+[  OK  ] Started Getty on tty5.
+[  OK  ] Started Getty on tty4.
+[  OK  ] Started Getty on tty3.
+[  OK  ] Started Getty on tty2.
+         Starting Message of the Day...
+[  OK  ] Started Serial Getty on ttyS0.
+[  OK  ] Started Getty on tty1.
+[  OK  ] Reached target Login Prompts.
+[  OK  ] Reached target Multi-User System.
+[  OK  ] Reached target Graphical Interface.
+         Starting Update UTMP about System Runlevel Changes...
+[  OK  ] Started Message of the Day.
+[  OK  ] Started Update UTMP about System Runlevel Changes.
+
+Ubuntu 18.04.6 LTS ubuntu-fc-uvm ttyS0
+
+ubuntu-fc-uvm login: root (automatic login)
+
+Last login: Mon Oct 31 01:53:04 UTC 2022 on ttyS0
+Welcome to Ubuntu 18.04.6 LTS (GNU/Linux 4.14.174 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+This system has been minimized by removing packages and content that are
+not required on a system that users do not log into.
+
+To restore this content, you can run the 'unminimize' command.
