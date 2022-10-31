@@ -164,8 +164,8 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 
 	return &MMDSConfig{
 		Latest: LatestConfig{
-			MetaData: md,
-			// UserData: string(udBytes),
+			MetaData: string(mdBytes),
+			UserData: string(udBytes),
 		},
 	}, nil
 
