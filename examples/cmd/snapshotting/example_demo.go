@@ -287,10 +287,11 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 				// network-config=__NETWORK_CONFIG__",
 
 				// cloud-init=disabled
-				disabled := "disabled"
-				kernelArgs["cloud-init"] = &disabled
+				//disabled := "disabled"
+				//kernelArgs["cloud-init"] = &disabled
 
-				ds := fmt.Sprintf("nocloud-net;s=http://%s/latest/", MMDS_IP)
+				// http://72.14.182.73:8090/latest/
+				ds := fmt.Sprintf("nocloud-net;s=http://%s/latest/", "72.14.182.73:8090")
 				kernelArgs["ds"] = &ds
 
 				netcfg, err := BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
