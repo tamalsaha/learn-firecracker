@@ -150,6 +150,7 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(string(udBytes))
 
 	md := Metadata{
 		InstanceID:    fmt.Sprintf("i-%d", instanceID),
@@ -163,7 +164,7 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 	return &MMDSConfig{
 		Latest: LatestConfig{
 			MetaData: string(mdBytes),
-			UserData: string(udBytes),
+			// UserData: string(udBytes),
 		},
 	}, nil
 

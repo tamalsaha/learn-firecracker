@@ -253,7 +253,7 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 
 	cfg := createNewConfig(socketFile, withNetworkInterface(nf0), withNetworkInterface(nf1))
 	cfg.MmdsAddress = net.ParseIP(MMDS_IP)
-	cfg.MmdsVersion = sdk.MMDSv2
+	cfg.MmdsVersion = sdk.MMDSv1
 
 	// Use firecracker binary when making machine
 	cmd := sdk.VMCommandBuilder{}.
@@ -286,8 +286,8 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 				// ds=nocloud-net;s=http://169.254.169.254/latest/
 				// network-config=__NETWORK_CONFIG__",
 
-				//ds := fmt.Sprintf("nocloud-net;s=http://%s/latest/", MMDS_IP)
-				//kernelArgs["ds"] = &ds
+				ds := fmt.Sprintf("nocloud-net;s=http://%s/latest/", MMDS_IP)
+				kernelArgs["ds"] = &ds
 
 				/*
 					netcfg, err := BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
@@ -349,18 +349,16 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 		}
 	}()
 
-	/*
-		{
-			mmds, err := BuildData(instanceID, "tamalsaha")
-			if err != nil {
-				log.Fatal(err)
-			}
-			err = m.SetMetadata(ctx, mmds)
-			if err != nil {
-				log.Fatal(err)
-			}
+	{
+		mmds, err := BuildData(instanceID, "tamalsaha")
+		if err != nil {
+			log.Fatal(err)
 		}
-	*/
+		err = m.SetMetadata(ctx, mmds)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	hostDevName := m.Cfg.NetworkInterfaces[len(m.Cfg.NetworkInterfaces)-1].StaticConfiguration.HostDevName
 	fmt.Printf("hostDevName: %v\n", hostDevName)
@@ -521,6 +519,7 @@ func main() {
 
 	ctx := context.Background()
 
+	fmt.Println("SOCKET_PATH:___", socketPath)
 	ipToRestore := createSnapshotSSH(ctx, instanceID, socketPath, memPath, snapPath)
 	fmt.Println(ipToRestore)
 }
