@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"compress/gzip"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -84,23 +83,23 @@ func BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1 string) (string, error) {
 
 	fmt.Println(string(ncBytes))
 
-	var buf bytes.Buffer
-	zw := gzip.NewWriter(&buf)
-	//// Setting the Header fields is optional.
-	//zw.Name = "a-new-hope.txt"
-	//zw.Comment = "an epic space opera by George Lucas"
-	//zw.ModTime = time.Date(1977, time.May, 25, 0, 0, 0, 0, time.UTC)
+	//var buf bytes.Buffer
+	//zw := gzip.NewWriter(&buf)
+	////// Setting the Header fields is optional.
+	////zw.Name = "a-new-hope.txt"
+	////zw.Comment = "an epic space opera by George Lucas"
+	////zw.ModTime = time.Date(1977, time.May, 25, 0, 0, 0, 0, time.UTC)
+	//
+	//_, err = zw.Write(ncBytes)
+	//if err != nil {
+	//	return "", err
+	//}
+	//
+	//if err := zw.Close(); err != nil {
+	//	return "", err
+	//}
 
-	_, err = zw.Write(ncBytes)
-	if err != nil {
-		return "", err
-	}
-
-	if err := zw.Close(); err != nil {
-		return "", err
-	}
-
-	cfg := base64.URLEncoding.EncodeToString(buf.Bytes())
+	cfg := base64.URLEncoding.EncodeToString(ncBytes)
 	return cfg, nil
 }
 

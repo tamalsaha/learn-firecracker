@@ -1,0 +1,17 @@
+version: 2
+ethernets:
+  eth0:
+    addresses:
+    - 169.254.169.254/16
+    match:
+      macaddress: AA:FC:ac:1a:00:02
+  eth1:
+    addresses:
+    - 172.26.0.3/24
+    gateway4: 172.26.0.2
+    match:
+      macaddress: AA:FC:ac:1a:00:03
+    nameservers:
+      addresses:
+      - 1.1.1.1
+      - 8.8.8.8

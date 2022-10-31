@@ -286,14 +286,18 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 				// ds=nocloud-net;s=http://169.254.169.254/latest/
 				// network-config=__NETWORK_CONFIG__",
 
-				//ds := fmt.Sprintf("nocloud-net;s=http://%s/latest/", MMDS_IP)
-				//kernelArgs["ds"] = &ds
+				// cloud-init=disabled
+				disabled := "disabled"
+				kernelArgs["cloud-init"] = &disabled
 
-				//netcfg, err := BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
-				//if err != nil {
-				//	return err
-				//}
-				//kernelArgs["network-config"] = &netcfg
+				ds := fmt.Sprintf("nocloud-net;s=http://%s/latest/", MMDS_IP)
+				kernelArgs["ds"] = &ds
+
+				netcfg, err := BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1)
+				if err != nil {
+					return err
+				}
+				kernelArgs["network-config"] = &netcfg
 
 				ipBootParam := func(conf *sdk.IPConfiguration) string {
 					// the vmconf package already has a function for doing this, just re-use it
