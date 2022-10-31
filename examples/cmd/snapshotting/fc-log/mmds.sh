@@ -1,9 +1,9 @@
 
 # check mmds
-curl -s --unix-socket /tmp/FCGoSDKSnapshotExample1495375699/fc-0.create http://localhost/mmds
+curl -s --unix-socket /tmp/FCGoSDKSnapshotExample1998987509/fc-0.create http://localhost/mmds
 
 # stop
-curl --unix-socket /tmp/FCGoSDKSnapshotExample1495375699/fc-0.create -i \
+curl --unix-socket /tmp/FCGoSDKSnapshotExample1998987509/fc-0.create -i \
   -X PUT 'http://localhost/actions'       \
   -H  'Accept: application/json'          \
   -H  'Content-Type: application/json'    \
@@ -14,7 +14,7 @@ curl --unix-socket /tmp/FCGoSDKSnapshotExample1495375699/fc-0.create -i \
 
 /tmp/FCGoSDKSnapshotExample1495375699/fc-0
 
-curl --unix-socket /tmp/FCGoSDKSnapshotExample1495375699/fc-0.create -i \
+curl --unix-socket /tmp/FCGoSDKSnapshotExample1998987509/fc-0.create -i \
     -X PUT "http://localhost/mmds"            \
     -H "Content-Type: application/json"       \
     -d '{
