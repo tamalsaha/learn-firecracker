@@ -47,7 +47,8 @@ func BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1 string) (string, error) {
 		)
 	*/
 	nc := NetworkConfig{
-		Version: 2,
+		Version:  2,
+		Renderer: "networkd",
 		Ethernets: map[string]EthernetConfig{
 			"eth0": {
 				Match: EthernetMatcher{
