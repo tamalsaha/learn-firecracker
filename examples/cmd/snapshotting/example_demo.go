@@ -53,7 +53,7 @@ const (
 	MMDS_SUBNET = 16
 
 	VMS_NETWORK_PREFIX = "172.26.0"
-	VMS_NETWORK_SUBNET = 24
+	VMS_NETWORK_SUBNET = 30
 )
 
 func writeCNIConfWithHostLocalSubnet(path, networkName, subnet string) error {
@@ -211,8 +211,10 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 	fmt.Println("EgressInterface:", egressIface)
 
 	// binary.Write(a, binary.LittleEndian, myInt)
-	ip0 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2)
-	ip1 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2+1)
+	//ip0 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2)
+	//ip1 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2+1)
+	ip0 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, instanceID*4+1)
+	ip1 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, instanceID*4+2)
 
 	fmt.Println("instanceID:", instanceID)
 	eth0Mac := MacAddr(net.ParseIP(ip0).To4())
@@ -220,8 +222,10 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 	eth1Mac := MacAddr(net.ParseIP(ip1).To4())
 	fmt.Println("ip1:", ip1, eth1Mac)
 
-	tap0 := fmt.Sprintf("tap%d", (instanceID+1)*2)
-	tap1 := fmt.Sprintf("tap%d", (instanceID+1)*2+1)
+	//tap0 := fmt.Sprintf("tap%d", (instanceID+1)*2)
+	//tap1 := fmt.Sprintf("tap%d", (instanceID+1)*2+1)
+	tap0 := fmt.Sprintf("tap%d", instanceID*4+1)
+	tap1 := fmt.Sprintf("tap%d", instanceID*4+2)
 
 	fmt.Println(tap0, tap1)
 	// TODO: enable again
@@ -535,6 +539,6 @@ func main() {
 	ctx := context.Background()
 
 	fmt.Println("SOCKET_PATH:___", socketPath)
-	ipToRestore := createSnapshotSSH(ctx, instanceID, socketPath, memPath, snapPath)
+	ipToRestore := createSnapshotSSH(ctx, *instanceID, socketPath, memPath, snapPath)
 	fmt.Println(ipToRestore)
 }

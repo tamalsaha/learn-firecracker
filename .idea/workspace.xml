@@ -7,6 +7,8 @@
     <list default="true" id="d68fcd6e-58c3-4560-b88c-f1cd70d94193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/cmd/snapshotting/example_demo.go" beforeDir="false" afterPath="$PROJECT_DIR$/examples/cmd/snapshotting/example_demo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/cmd/snapshotting/lib.go" beforeDir="false" afterPath="$PROJECT_DIR$/examples/cmd/snapshotting/lib.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out-eface/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/out-eface/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +56,7 @@
     "settings.editor.selected.configurable": "com.goide.configuration.GoProjectSettingsConfigurable"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Build.go build github.com/tamalsaha/learn-firecracker/out-eface">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="learn-firecracker" />
       <working_directory value="$PROJECT_DIR$" />
@@ -62,6 +64,15 @@
       <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build github.com/tamalsaha/learn-firecracker/out-eface" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="learn-firecracker" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/tamalsaha/learn-firecracker/out-eface" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/out-eface/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -85,6 +96,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build github.com/tamalsaha/learn-firecracker/out-eface" />
         <item itemvalue="Go Build.go build main" />
       </list>
     </recent_temporary>
