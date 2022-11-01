@@ -62,6 +62,7 @@ type UserData struct {
 
 type User struct {
 	Name              string   `json:"name"`
+	PlainTextPasswd   string   `json:"plain_text_passwd"`
 	Gecos             string   `json:"gecos,omitempty"`
 	Shell             string   `json:"shell,omitempty"`
 	Groups            string   `json:"groups,omitempty"`

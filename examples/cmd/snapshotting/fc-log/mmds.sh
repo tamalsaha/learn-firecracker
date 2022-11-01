@@ -3,7 +3,7 @@
 curl -s --unix-socket /tmp/FCGoSDKSnapshotExample1022047977/fc-0.create http://localhost/mmds
 
 # stop
-curl --unix-socket /tmp/FCGoSDKSnapshotExample1406378830/fc-0.create -i \
+curl --unix-socket /tmp/FCGoSDKSnapshotExample2494494834/fc-0.create -i \
   -X PUT 'http://localhost/actions'       \
   -H  'Accept: application/json'          \
   -H  'Content-Type: application/json'    \
@@ -71,8 +71,4 @@ root@ubuntu-fc-uvm:~# ip r
 default via 172.26.0.2 dev eth1
 169.254.169.254 dev eth0 scope link
 172.26.0.0/24 dev eth1 proto kernel scope link src 172.26.0.3
-
-
-
-
 

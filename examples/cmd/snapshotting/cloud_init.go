@@ -128,6 +128,7 @@ func BuildData(instanceID int, ghUsernames ...string) (*MMDSConfig, error) {
 			},
 			{
 				Name:              "runner",
+				PlainTextPasswd:   "ubuntu",
 				Gecos:             "GitHub Action Runner",
 				Shell:             "/bin/bash",
 				Groups:            strings.Join([]string{"sudo", "docker"}, ", "), // groups: users, admin
