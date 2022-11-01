@@ -328,7 +328,7 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 				// The Ethernet device eth0 will be automatically configured using BOOTP.
 				ipBootParam2 = strings.ReplaceAll(ipBootParam2, ":off:", ":bootp:")
 				oneliners.FILE("IP:", ipBootParam2)
-				kernelArgs["ip"] = &ipBootParam2
+				// kernelArgs["ip"] = &ipBootParam2
 
 				m.Cfg.KernelArgs = `console=ttyS0 noapic reboot=k panic=1 pci=off nomodules rw ` + kernelArgs.String()
 
