@@ -3,7 +3,7 @@
 curl -s --unix-socket /tmp/FCGoSDKSnapshotExample1998987509/fc-0.create http://localhost/mmds
 
 # stop
-curl --unix-socket /tmp/FCGoSDKSnapshotExample2942939869/fc-0.create -i \
+curl --unix-socket /tmp/FCGoSDKSnapshotExample2778835234/fc-0.create -i \
   -X PUT 'http://localhost/actions'       \
   -H  'Accept: application/json'          \
   -H  'Content-Type: application/json'    \
@@ -33,3 +33,27 @@ ds=nocloud-net;s=http://169.254.169.254/latest/ network-config=dmVyc2lvbjogMgpld
 https://askubuntu.com/questions/1104285/how-do-i-reload-network-configuration-with-cloud-init
 
 https://askubuntu.com/questions/1405294/ubuntu-20-04-cloud-init-wont-configure-network
+
+
+root@ubuntu-fc-uvm:~# ip r
+default via 172.26.0.2 dev eth1
+172.26.0.0/24 dev eth1 proto kernel scope link src 172.26.0.3
+root@ubuntu-fc-uvm:~# netplan apply
+
+root@ubuntu-fc-uvm:~# ip r
+default via 172.26.0.2 dev eth1
+default via 172.26.0.2 dev eth1 proto static
+169.254.0.0/16 dev eth0 proto kernel scope link src 169.254.169.254
+172.26.0.0/24 dev eth1 proto kernel scope link src 172.26.0.3
+
+
+
+root@ubuntu-fc-uvm:~# ip r
+default via 172.26.0.2 dev eth1
+169.254.169.254 dev eth0 scope link
+172.26.0.0/24 dev eth1 proto kernel scope link src 172.26.0.3
+
+
+
+
+
