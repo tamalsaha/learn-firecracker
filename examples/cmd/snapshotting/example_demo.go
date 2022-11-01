@@ -105,9 +105,20 @@ func createNewConfig(socketPath string, opts ...configOpt) sdk.Config {
 	isReadOnly := false
 	pathOnHost := "root-drive-with-ssh.img"
 
+	/*
+		/root/go/src/github.com/tamalsaha/firecracker-automation/202012-firecracker_cloud_image_automation/images/bionic/bionic.initrd
+		/root/go/src/github.com/tamalsaha/firecracker-automation/202012-firecracker_cloud_image_automation/images/bionic/bionic.rootfs
+		/root/go/src/github.com/tamalsaha/firecracker-automation/202012-firecracker_cloud_image_automation/images/bionic/bionic.vmlinux
+	*/
+
+	kernelImagePath = "/root/go/src/github.com/tamalsaha/firecracker-automation/202012-firecracker_cloud_image_automation/images/bionic/bionic.vmlinux"
+	pathOnHost = "/root/go/src/github.com/tamalsaha/firecracker-automation/202012-firecracker_cloud_image_automation/images/bionic/bionic.rootfs"
+	initrdPath := "/root/go/src/github.com/tamalsaha/firecracker-automation/202012-firecracker_cloud_image_automation/images/bionic/bionic.initrd"
+
 	cfg := sdk.Config{
 		SocketPath:      socketPath,
 		KernelImagePath: kernelImagePath,
+		InitrdPath:      initrdPath,
 		MachineCfg: models.MachineConfiguration{
 			VcpuCount:   &vcpuCount,
 			CPUTemplate: cpuTemplate,

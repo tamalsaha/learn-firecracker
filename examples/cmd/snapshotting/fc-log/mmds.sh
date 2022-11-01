@@ -3,7 +3,7 @@
 curl -s --unix-socket /tmp/FCGoSDKSnapshotExample1022047977/fc-0.create http://localhost/mmds
 
 # stop
-curl --unix-socket /tmp/FCGoSDKSnapshotExample2778835234/fc-0.create -i \
+curl --unix-socket /tmp/FCGoSDKSnapshotExample1406378830/fc-0.create -i \
   -X PUT 'http://localhost/actions'       \
   -H  'Accept: application/json'          \
   -H  'Content-Type: application/json'    \
@@ -40,6 +40,7 @@ https://askubuntu.com/questions/1405294/ubuntu-20-04-cloud-init-wont-configure-n
 
 DI_LOG=stderr /usr/lib/cloud-init/ds-identify --force
 rm /etc/cloud/cloud-init.disabled
+yes | unminimize
 cloud-init clean --logs
 cloud-init init --local
 # sudo cloud-init init
