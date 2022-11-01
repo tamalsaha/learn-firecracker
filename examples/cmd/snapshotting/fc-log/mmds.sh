@@ -1,6 +1,6 @@
 
 # check mmds
-curl -s --unix-socket /tmp/FCGoSDKSnapshotExample1998987509/fc-0.create http://localhost/mmds
+curl -s --unix-socket /tmp/FCGoSDKSnapshotExample1022047977/fc-0.create http://localhost/mmds
 
 # stop
 curl --unix-socket /tmp/FCGoSDKSnapshotExample2778835234/fc-0.create -i \
@@ -34,6 +34,24 @@ https://askubuntu.com/questions/1104285/how-do-i-reload-network-configuration-wi
 
 https://askubuntu.com/questions/1405294/ubuntu-20-04-cloud-init-wont-configure-network
 
+
+- https://netplan.io/troubleshooting
+
+
+DI_LOG=stderr /usr/lib/cloud-init/ds-identify --force
+rm /etc/cloud/cloud-init.disabled
+cloud-init clean --logs
+cloud-init init --local
+# sudo cloud-init init
+netplan generate
+netplan apply
+
+/etc/netplan/***
+
+cloud-init static route
+[route]
+/run/systemd/network
+https://manpages.ubuntu.com/manpages/bionic/man5/systemd.network.5.html
 
 root@ubuntu-fc-uvm:~# ip r
 default via 172.26.0.2 dev eth1

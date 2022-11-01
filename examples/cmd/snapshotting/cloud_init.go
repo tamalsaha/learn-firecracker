@@ -55,7 +55,8 @@ func BuildNetCfg(eth0Mac, eth1Mac, ip0, ip1 string) (string, error) {
 					Macaddress: eth0Mac,
 				},
 				Addresses: []string{
-					fmt.Sprintf("%s/%d", MMDS_IP, MMDS_SUBNET),
+					"169.254.0.1/16",
+					// fmt.Sprintf("%s/%d", MMDS_IP, MMDS_SUBNET),
 				},
 				Gateway4:    "",
 				Nameservers: nil,
