@@ -492,7 +492,7 @@ ip link set eth1 up
 ip route add 169.254.169.254 dev eth1
 */
 func main() {
-	instanceID := flag.Int("instanceID", 0, "Instance ID, starts from 0")
+	instanceID := flag.Int("instanceID", 1, "Instance ID, starts from 0")
 	flag.Parse()
 
 	// Check for kvm and root access
