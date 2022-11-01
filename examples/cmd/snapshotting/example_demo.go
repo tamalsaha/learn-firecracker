@@ -16,6 +16,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -487,7 +488,8 @@ ip link set eth1 up
 ip route add 169.254.169.254 dev eth1
 */
 func main() {
-	oneliners.FILE()
+	instanceID := flag.Int("instanceID", 0, "Instance ID, starts from 0")
+	flag.Parse()
 
 	// Check for kvm and root access
 	err := unix.Access("/dev/kvm", unix.W_OK)
@@ -519,7 +521,6 @@ func main() {
 	}
 	defer os.Remove(tempdir)
 
-	instanceID := 0
 	socketPath := filepath.Join(tempdir, fmt.Sprintf("fc-%d", instanceID))
 
 	err = os.Mkdir("snapshotssh", 0o777)
