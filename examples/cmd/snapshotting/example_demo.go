@@ -126,9 +126,13 @@ func createNewConfig(socketPath string, opts ...configOpt) sdk.Config {
 		/root/img/images/focal/focal.vmlinux
 	*/
 
-	kernelImagePath = "/root/img/images/focal/focal.vmlinux"
-	pathOnHost = "/root/img/images/focal/focal.rootfs"
-	initrdPath := "/root/img/images/focal/focal.initrd"
+	kernelImagePath = "/root/img/images/bionic/bionic.vmlinux"
+	pathOnHost = "/root/img/images/bionic/bionic.rootfs"
+	initrdPath := "/root/img/images/bionic/bionic.initrd"
+
+	//kernelImagePath = "/root/img/images/focal/focal.vmlinux"
+	//pathOnHost = "/root/img/images/focal/focal.rootfs"
+	//initrdPath := "/root/img/images/focal/focal.initrd"
 
 	cfg := sdk.Config{
 		SocketPath:      socketPath,
