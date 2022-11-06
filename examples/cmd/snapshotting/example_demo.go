@@ -112,9 +112,21 @@ func createNewConfig(socketPath string, opts ...configOpt) sdk.Config {
 		/root/go/src/github.com/tamalsaha/firecracker-automation/202012-firecracker_cloud_image_automation/images/bionic/bionic.vmlinux
 	*/
 
-	kernelImagePath = "/root/go/src/github.com/tamalsaha/firecracker-automation/202012-firecracker_cloud_image_automation/images/bionic/bionic.vmlinux"
-	pathOnHost = "/root/go/src/github.com/tamalsaha/firecracker-automation/202012-firecracker_cloud_image_automation/images/bionic/bionic.rootfs"
-	initrdPath := "/root/go/src/github.com/tamalsaha/firecracker-automation/202012-firecracker_cloud_image_automation/images/bionic/bionic.initrd"
+	/*
+		// bionic (ubuntu 18.04):
+		/root/img/images/bionic/bionic.initrd
+		/root/img/images/bionic/bionic.rootfs
+		/root/img/images/bionic/bionic.vmlinux
+
+		// focal (ubuntu 20.04):
+		/root/img/images/focal/focal.initrd
+		/root/img/images/focal/focal.rootfs
+		/root/img/images/focal/focal.vmlinux
+	*/
+
+	kernelImagePath = "/root/img/images/focal/focal.vmlinux"
+	pathOnHost = "/root/img/images/focal/focal.rootfs"
+	initrdPath := "/root/img/images/focal/focal.initrd"
 
 	cfg := sdk.Config{
 		SocketPath:      socketPath,
