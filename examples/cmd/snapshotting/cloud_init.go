@@ -127,11 +127,20 @@ func BuildData(instanceID int, ghUsernames ...string) (*MMDSConfig, error) {
 				Name: "default",
 			},
 			{
-				Name:              "runner",
-				PlainTextPasswd:   "ubuntu",
+				Name: "root",
+				// PlainTextPasswd: "root",
+				Gecos: "Root user",
+				Shell: "/bin/bash",
+				// Groups:            strings.Join([]string{"sudo", "docker"}, ", "), // groups: users, admin
+				// Sudo:              "ALL=(ALL) NOPASSWD:ALL",
+				SSHAuthorizedKeys: keys,
+			},
+			{
+				Name: "runner",
+				// PlainTextPasswd:   "ubuntu",
 				Gecos:             "GitHub Action Runner",
 				Shell:             "/bin/bash",
-				Groups:            strings.Join([]string{"sudo", "docker"}, ", "), // groups: users, admin
+				Groups:            strings.Join([]string{"sudo"}, ", "), // groups: "docker", users, admin
 				Sudo:              "ALL=(ALL) NOPASSWD:ALL",
 				SSHAuthorizedKeys: keys,
 			},

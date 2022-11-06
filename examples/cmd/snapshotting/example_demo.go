@@ -225,8 +225,8 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 	fmt.Println("EgressInterface:", egressIface)
 
 	// binary.Write(a, binary.LittleEndian, myInt)
-	//ip0 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2)
-	//ip1 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2+1)
+	// ip0 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2)
+	// ip1 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, (instanceID+1)*2+1)
 	ip0 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, instanceID*4+1)
 	ip1 := fmt.Sprintf("%s.%d", VMS_NETWORK_PREFIX, instanceID*4+2)
 
@@ -236,8 +236,8 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 	eth1Mac := MacAddr(net.ParseIP(ip1).To4())
 	fmt.Println("ip1:", ip1, eth1Mac)
 
-	//tap0 := fmt.Sprintf("tap%d", (instanceID+1)*2)
-	//tap1 := fmt.Sprintf("tap%d", (instanceID+1)*2+1)
+	// tap0 := fmt.Sprintf("tap%d", (instanceID+1)*2)
+	// tap1 := fmt.Sprintf("tap%d", (instanceID+1)*2+1)
 	tap0 := fmt.Sprintf("tap%d", instanceID*4+1)
 	tap1 := fmt.Sprintf("tap%d", instanceID*4+2)
 
@@ -317,8 +317,8 @@ func createSnapshotSSH(ctx context.Context, instanceID int, socketPath, memPath,
 				// network-config=__NETWORK_CONFIG__",
 
 				// cloud-init=disabled
-				//disabled := "disabled"
-				//kernelArgs["cloud-init"] = &disabled
+				// disabled := "disabled"
+				// kernelArgs["cloud-init"] = &disabled
 
 				// http://72.14.182.73:8090/latest/
 				ds := fmt.Sprintf("nocloud-net;s=http://%s/latest/", MMDS_IP) // "72.14.182.73:8090")
