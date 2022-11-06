@@ -96,9 +96,9 @@ func createNewConfig(socketPath string, opts ...configOpt) sdk.Config {
 	fmt.Println(dir)
 	kernelImagePath := filepath.Join(dir, "vmlinux")
 
-	var vcpuCount int64 = 2
+	var vcpuCount int64 = 4
 	cpuTemplate := models.CPUTemplate(models.CPUTemplateT2)
-	var memSizeMib int64 = 256
+	var memSizeMib int64 = 1024 * 16
 	smt := false
 
 	driveID := "root"
@@ -113,11 +113,13 @@ func createNewConfig(socketPath string, opts ...configOpt) sdk.Config {
 	*/
 
 	/*
+		// curl -L https://gist.githubusercontent.com/tamalsaha/af2f99c80f84410253bd1e532bdfabc7/raw/1a5ea8aba0f06d71d0cf1934b2b92aa2b1b10528/build_rootfs.sh | bash -s -- focal 20G
 		// bionic (ubuntu 18.04):
 		/root/img/images/bionic/bionic.initrd
 		/root/img/images/bionic/bionic.rootfs
 		/root/img/images/bionic/bionic.vmlinux
 
+		// curl -L https://gist.githubusercontent.com/tamalsaha/af2f99c80f84410253bd1e532bdfabc7/raw/1a5ea8aba0f06d71d0cf1934b2b92aa2b1b10528/build_rootfs.sh | bash -s -- bionic 20G
 		// focal (ubuntu 20.04):
 		/root/img/images/focal/focal.initrd
 		/root/img/images/focal/focal.rootfs
