@@ -146,6 +146,7 @@ func BuildData(instanceID int, ghUsernames ...string) (*MMDSConfig, error) {
 			},
 		},
 		Bootcmd: []string{
+			// BUG: https://bugs.launchpad.net/ubuntu/+source/cloud-initramfs-tools/+bug/1958260
 			"apt install --reinstall linux-modules-`uname -r`",
 			// "systemctl restart docker",
 		},
