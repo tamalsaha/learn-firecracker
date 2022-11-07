@@ -9,6 +9,7 @@ curl -L https://gist.githubusercontent.com/tamalsaha/af2f99c80f84410253bd1e532bd
 
 
 
+Bug: https://bugs.launchpad.net/ubuntu/+source/cloud-initramfs-tools/+bug/1958260
 
 apt install --reinstall linux-modules-`uname -r`
 
