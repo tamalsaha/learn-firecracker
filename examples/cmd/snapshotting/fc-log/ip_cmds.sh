@@ -12,7 +12,7 @@ sudo iptables -t nat -A POSTROUTING -o bond0 -j MASQUERADE
 sudo iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 sudo iptables -A FORWARD -i tap2 -o bond0 -j ACCEPT
 
- ssh -i id_m1 runner@172.26.0.2
+ssh -i id_m1 runner@172.26.0.2
 
 # instance = 1
 sudo ip tuntap add tap5 mode tap

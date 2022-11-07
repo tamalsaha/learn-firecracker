@@ -145,6 +145,10 @@ func BuildData(instanceID int, ghUsernames ...string) (*MMDSConfig, error) {
 				SSHAuthorizedKeys: keys,
 			},
 		},
+		Bootcmd: []string{
+			"apt install --reinstall linux-modules-`uname -r`",
+			// "systemctl restart docker",
+		},
 	}
 	//udBytes, err := yaml.Marshal(userData)
 	//if err != nil {

@@ -57,7 +57,8 @@ type Metadata struct {
 ////
 
 type UserData struct {
-	Users []User `json:"users"`
+	Users   []User   `json:"users"`
+	Bootcmd []string `json:"bootcmd"`
 }
 
 type User struct {
