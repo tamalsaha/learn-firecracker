@@ -539,7 +539,7 @@ sudo iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 sudo iptables -A FORWARD -i tap6 -o bond0 -j ACCEPT
 */
 func main() {
-	instanceID := flag.Int("instanceID", 1, "Instance ID, starts from 0")
+	instanceID := flag.Int("instanceID", 0, "Instance ID, starts from 0")
 	flag.Parse()
 
 	// Check for kvm and root access
