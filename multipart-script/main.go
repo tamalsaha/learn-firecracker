@@ -128,7 +128,9 @@ echo "Created by bash shell script" >> /test-userscript/userscript.txt
 }
 
 func main() {
-	if _, err := PrepareCloudInitUserData(); err != nil {
+	if s, err := PrepareCloudInitUserData(); err != nil {
 		panic(err)
+	} else {
+		fmt.Println(s)
 	}
 }
